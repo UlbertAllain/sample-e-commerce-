@@ -1,0 +1,59 @@
+diff --git a/src/app/error.tsx b/src/app/error.tsx
+new file mode 100644
+index 0000000..8b5172c
+--- /dev/null
++++ b/src/app/error.tsx
+@@ -0,0 +1,28 @@
++"use client";
++
++import { useEffect } from "react";
++import { Button } from "@/components/ui/button";
++
++export default function StorefrontError({
++  error,
++  reset,
++}: {
++  error: Error & { digest?: string };
++  reset: () => void;
++}) {
++  useEffect(() => {
++    console.error("Storefront runtime error", error);
++  }, [error]);
++
++  return (
++    <section className="shell empty-state">
++      <span className="eyebrow">TERJADI KESALAHAN</span>
++      <h1>Halaman belum dapat ditampilkan.</h1>
++      <p>Silakan muat ulang halaman. Jika masalah tetap terjadi, periksa log deployment Vercel.</p>
++      <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
++        <Button type="button" onClick={reset}>Coba lagi</Button>
++        <Button href="/" variant="secondary">Kembali ke beranda</Button>
++      </div>
++    </section>
++  );
++}
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+index 0e7d366..29e3206 100644
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -39,6 +39,9 @@ export default function HomePage() {
+     return <section className="shell empty-state"><h1>Produk belum tersedia</h1><p>Tambahkan produk melalui dashboard admin.</p><Button href="/admin/products/new">Tambah produk</Button></section>;
+   }
+ 
++  const galleryPrimary = products[4] ?? products[1] ?? heroProduct;
++  const gallerySecondary = products[7] ?? products[2] ?? heroProduct;
++
+   return (
+     <>
+       <section className="natural-home">
+@@ -150,8 +153,8 @@ export default function HomePage() {
+         <div className="natural-inspiration__gallery">
+           <img src="/brand/hero-aquarium.svg" alt="Inspirasi aquascape" />
+           <div>
+-            <img src={products[4].image} alt={products[4].name} />
+-            <img src={products[7].image} alt={products[7].name} />
++            <img src={galleryPrimary.image} alt={galleryPrimary.name} />
++            <img src={gallerySecondary.image} alt={gallerySecondary.name} />
+           </div>
+           <span><Leaf size={17} /> Pilihan untuk aquascape natural</span>
+         </div>

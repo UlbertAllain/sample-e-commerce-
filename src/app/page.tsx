@@ -39,6 +39,9 @@ export default function HomePage() {
     return <section className="shell empty-state"><h1>Produk belum tersedia</h1><p>Tambahkan produk melalui dashboard admin.</p><Button href="/admin/products/new">Tambah produk</Button></section>;
   }
 
+  const galleryPrimary = products[4] ?? products[1] ?? heroProduct;
+  const gallerySecondary = products[7] ?? products[2] ?? heroProduct;
+
   return (
     <>
       <section className="natural-home">
@@ -150,8 +153,8 @@ export default function HomePage() {
         <div className="natural-inspiration__gallery">
           <img src="/brand/hero-aquarium.svg" alt="Inspirasi aquascape" />
           <div>
-            <img src={products[4].image} alt={products[4].name} />
-            <img src={products[7].image} alt={products[7].name} />
+            <img src={galleryPrimary.image} alt={galleryPrimary.name} />
+            <img src={gallerySecondary.image} alt={gallerySecondary.name} />
           </div>
           <span><Leaf size={17} /> Pilihan untuk aquascape natural</span>
         </div>
