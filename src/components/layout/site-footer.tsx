@@ -8,12 +8,13 @@ export function SiteFooter() {
           <Link href="/" className="brand brand--footer">
             <img src="/brand/logo-mark.svg" alt="" />
             <div>
-              <strong>BERKAH OYOT</strong>
-              <span>Premium Aquarium Store</span>
+              <strong>Berkah Oyot</strong>
+              <span>Aquarium Store</span>
             </div>
           </Link>
           <p>
-            Perlengkapan filtrasi, mesin, pencahayaan, dekorasi, pakan, dan perawatan akuarium.
+            Perlengkapan filtrasi, mesin, pencahayaan, dekorasi,
+            pakan, dan perawatan akuarium dari Sukoharjo.
           </p>
         </div>
 
@@ -22,20 +23,19 @@ export function SiteFooter() {
           <Link href="/catalog">Semua produk</Link>
           <Link href="/catalog?category=filter">Filtrasi</Link>
           <Link href="/catalog?category=machine">Mesin & pompa</Link>
-          <Link href="/cart">Keranjang</Link>
+          <Link href="/catalog?category=decoration">Dekorasi</Link>
         </div>
 
         <div>
           <h4>Layanan</h4>
           <Link href="/tracking">Lacak pesanan</Link>
           <Link href="/account">Akun pelanggan</Link>
-          <Link href="/login">Masuk</Link>
-          <Link href="/register">Daftar</Link>
+          <Link href="/cart">Keranjang</Link>
         </div>
 
         <div>
           <h4>Kontak</h4>
-          <p>Blimbing, Wonorejo, Polokarto, Sukoharjo, Jawa Tengah 57555</p>
+          <p>Blimbing, Wonorejo, Polokarto<br />Sukoharjo, Jawa Tengah 57555</p>
           <p>+62 882-0053-95987</p>
           <p>admin@berkahoyot.com</p>
         </div>

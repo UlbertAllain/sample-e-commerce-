@@ -40,8 +40,8 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
           <p>Profil pelanggan akan digunakan otomatis pada checkout, invoice, dan label pengiriman.</p>
         </div>
         <ul>
-          <li><ShieldCheck size={18} /> Data akun tersimpan di browser ini.</li>
-          <li><LockKeyhole size={18} /> Integrasi Firebase Auth disiapkan untuk versi produksi.</li>
+          <li><ShieldCheck size={18} /> Data akun digunakan untuk mempercepat proses checkout.</li>
+          <li><LockKeyhole size={18} /> Profil dan alamat dapat diperbarui dari halaman akun.</li>
         </ul>
       </div>
       <div className="auth-page__form-wrap">

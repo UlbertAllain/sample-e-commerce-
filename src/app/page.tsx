@@ -1,130 +1,160 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  CreditCard,
-  PackageCheck,
-  ShieldCheck,
-  Truck,
-} from "lucide-react";
+import { ArrowRight, Leaf, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { ProductCard } from "@/components/store/product-card";
 import { Button } from "@/components/ui/button";
 import { categories } from "@/data/categories";
 import { products } from "@/data/products";
+import { formatCurrency } from "@/lib/formatters";
 
-const benefits = [
+const services = [
   {
     icon: ShieldCheck,
-    title: "Produk terpilih",
-    text: "Perlengkapan akuarium dengan informasi produk yang jelas.",
+    title: "Produk terkurasi",
+    text: "Informasi produk, stok, dan spesifikasi ditampilkan dengan jelas.",
   },
   {
     icon: Truck,
     title: "Pengiriman fleksibel",
-    text: "Pilih layanan pengiriman sesuai kebutuhan.",
-  },
-  {
-    icon: CreditCard,
-    title: "Pembayaran mudah",
-    text: "Transfer bank, QRIS, dan COD.",
+    text: "Pilih layanan reguler, cepat, atau ambil langsung di toko.",
   },
   {
     icon: PackageCheck,
-    title: "Lacak pesanan",
-    text: "Pantau status pengiriman dari satu halaman.",
+    title: "Pesanan mudah dilacak",
+    text: "Nomor resi dan perjalanan paket tersedia setelah checkout.",
   },
 ];
 
 export default function HomePage() {
-  const featured = products.filter((product) => product.isFeatured).slice(0, 8);
+  const featured = products.filter((product) => product.isFeatured).slice(0, 6);
+  const highlights = products.slice(0, 3);
+  const heroProduct = products.find((product) => product.category === "decoration") ?? products[0];
 
   return (
     <>
-      <section className="commerce-hero">
-        <div className="shell commerce-hero__grid">
-          <div className="commerce-hero__copy">
-            <span className="section-kicker">PREMIUM AQUARIUM STORE</span>
-            <h1>Semua kebutuhan akuarium dalam satu tempat.</h1>
-            <p>
-              Temukan filter, pompa, lampu, dekorasi, pakan, dan perlengkapan perawatan akuarium.
-            </p>
-            <div className="commerce-hero__actions">
-              <Button href="/catalog">Belanja sekarang <ArrowRight size={18} /></Button>
-              <Link href="/tracking" className="secondary-cta">
-                Lacak pesanan
-              </Link>
+      <section className="natural-home">
+        <div className="shell natural-home__grid">
+          <div className="natural-home__main">
+            <div className="natural-home__copy">
+              <span className="eyebrow">BERKAH OYOT AQUARIUM STORE</span>
+              <h1>Harmoni alam di dalam kaca.</h1>
+              <p>
+                Temukan perlengkapan filtrasi, sirkulasi, pencahayaan, dekorasi,
+                dan perawatan untuk membangun akuarium yang lebih sehat dan indah.
+              </p>
+              <div className="natural-home__actions">
+                <Button href="/catalog">Mulai belanja <ArrowRight size={18} /></Button>
+                <Link href="/tracking" className="text-link">Lacak pesanan <ArrowRight size={16} /></Link>
+              </div>
             </div>
+
+            <div className="natural-home__visual">
+              <img src="/brand/hero-aquarium.svg" alt="Aquascape Berkah Oyot" />
+            </div>
+
+
+            <article className="natural-home__floating-product">
+              <div className="natural-home__floating-image">
+                <img src={heroProduct.image} alt={heroProduct.name} />
+              </div>
+              <div>
+                <span>{heroProduct.categoryLabel}</span>
+                <Link href={`/products/${heroProduct.slug}`}>{heroProduct.shortName}</Link>
+                <strong>{formatCurrency(heroProduct.price)}</strong>
+              </div>
+            </article>
           </div>
 
-          <div className="commerce-hero__visual">
-            <img
-              src="/brand/stage-storefront.svg"
-              alt="Tampilan katalog Berkah Oyot"
-            />
-          </div>
+          <aside className="natural-home__aside">
+            <div className="natural-home__aside-heading">
+              <div>
+                <span className="eyebrow">PILIHAN TOKO</span>
+                <h2>Produk unggulan</h2>
+              </div>
+              <Link href="/catalog">Lihat semua <ArrowRight size={15} /></Link>
+            </div>
+
+            <div className="natural-home__highlight-list">
+              {highlights.map((product, index) => (
+                <article key={product.id} className="highlight-product">
+                  <Link href={`/products/${product.slug}`} className="highlight-product__media">
+                    <img src={product.image} alt={product.name} />
+                    <span>{index === 0 ? "Terlaris" : index === 1 ? "Pilihan" : "Favorit"}</span>
+                  </Link>
+                  <div className="highlight-product__body">
+                    <Link href={`/products/${product.slug}`}>{product.shortName}</Link>
+                    <p>{product.description}</p>
+                    <strong>{formatCurrency(product.price)}</strong>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </aside>
         </div>
       </section>
 
       <section className="section section--compact shell">
-        <div className="category-strip">
+        <div className="natural-category-list">
           {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/catalog?category=${category.id}`}
-              className="category-strip__item"
-            >
+            <Link key={category.id} href={`/catalog?category=${category.id}`}>
               <span>{category.icon}</span>
-              <strong>{category.name}</strong>
+              <div>
+                <strong>{category.name}</strong>
+                <small>{category.description}</small>
+              </div>
+              <ArrowRight size={16} />
             </Link>
           ))}
         </div>
       </section>
 
-      <section className="section section--compact product-zone-v3">
-        <div className="shell">
-          <div className="section-heading section-heading--clean">
-            <div>
-              <span className="section-kicker">PRODUK POPULER</span>
-              <h2>Produk pilihan</h2>
-            </div>
-            <Link href="/catalog" className="inline-link">
-              Lihat semua <ArrowRight size={16} />
-            </Link>
+      <section className="section section--compact shell">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">KOLEKSI PILIHAN</span>
+            <h2>Perlengkapan untuk kebutuhan harian</h2>
           </div>
+          <Link href="/catalog" className="text-link">Semua produk <ArrowRight size={16} /></Link>
+        </div>
+        <div className="product-grid product-grid--feature">
+          {featured.map((product) => <ProductCard key={product.id} product={product} />)}
+        </div>
+      </section>
 
-          <div className="product-grid product-grid--feature-v3">
-            {featured.map((product) => (
-              <ProductCard key={product.id} product={product} />
+      <section className="section section--compact shell natural-inspiration">
+        <div className="natural-inspiration__content">
+          <span className="eyebrow">INSPIRASI AQUARIUM</span>
+          <h2>Bangun ekosistem yang nyaman untuk ikan dan enak dipandang.</h2>
+          <p>
+            Kombinasikan filtrasi yang tepat, sirkulasi stabil, pencahayaan, dan elemen dekorasi
+            sesuai ukuran akuarium Anda.
+          </p>
+          <div className="natural-inspiration__services">
+            {services.map(({ icon: Icon, title, text }) => (
+              <article key={title}>
+                <Icon size={20} />
+                <div><strong>{title}</strong><p>{text}</p></div>
+              </article>
             ))}
           </div>
         </div>
-      </section>
-
-      <section className="section section--compact shell">
-        <div className="benefit-grid">
-          {benefits.map(({ icon: Icon, title, text }) => (
-            <article key={title} className="benefit-card">
-              <div className="benefit-card__icon">
-                <Icon size={20} />
-              </div>
-              <div>
-                <strong>{title}</strong>
-                <p>{text}</p>
-              </div>
-            </article>
-          ))}
+        <div className="natural-inspiration__gallery">
+          <img src="/brand/hero-aquarium.svg" alt="Inspirasi aquascape" />
+          <div>
+            <img src={products[4].image} alt={products[4].name} />
+            <img src={products[7].image} alt={products[7].name} />
+          </div>
+          <span><Leaf size={17} /> Pilihan untuk aquascape natural</span>
         </div>
       </section>
 
       <section className="section section--compact shell">
-        <div className="promo-simple">
+        <div className="natural-promo">
           <div>
-            <span>Diskon 10%</span>
+            <span>Potongan 10%</span>
             <h2>Gunakan kode AQUA10</h2>
-            <p>Maksimal potongan Rp25.000.</p>
+            <p>Maksimal potongan Rp25.000 untuk pesanan Anda.</p>
           </div>
-          <Button href="/catalog" variant="secondary">
-            Belanja sekarang
-          </Button>
+          <Button href="/catalog" variant="secondary">Belanja sekarang</Button>
         </div>
       </section>
     </>

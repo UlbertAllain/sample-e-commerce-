@@ -378,7 +378,7 @@ export default function CheckoutPage() {
           <div className="summary-security">
             <ShieldCheck size={16} />
             <span>
-              Transaksi ini merupakan simulasi dan tidak memproses uang nyata.
+              Pembayaran pada versi pratinjau belum terhubung ke payment gateway.
             </span>
           </div>
         </aside>

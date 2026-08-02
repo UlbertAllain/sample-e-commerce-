@@ -1,0 +1,656 @@
+diff -ruN a/public/brand/fish-school.svg b/public/brand/fish-school.svg
+--- a/public/brand/fish-school.svg	1970-01-01 00:00:00.000000000 +0000
++++ b/public/brand/fish-school.svg	2026-08-02 13:09:02.380439449 +0000
+@@ -0,0 +1,11 @@
++<svg width="220" height="74" viewBox="0 0 220 74" fill="none" xmlns="http://www.w3.org/2000/svg">
++  <g fill="#94856B">
++    <path d="M24 36C17.6 31.2 8.93333 30 0 33.2C4.8 34.2667 8.26667 36 10.4 38.4C8.26667 40.5333 4.8 42.1333 0 43.2C8.93333 46.4 17.6 45.3333 24 40L44 38.8L24 36Z"/>
++    <path d="M62 24C57.2 20 50.8 18.9333 43 20.8C46.7333 22.1333 49.2 23.6 50.4 25.2C49.2 26.8 46.7333 28.1333 43 29.2C50.8 31.3333 57.2 30.2667 62 26L77 25.2L62 24Z"/>
++    <path d="M88 49C83.7333 45.8 78.1333 44.9333 71.2 46.4C74.4 47.4667 76.6667 48.8 78 50.4C76.6667 51.7333 74.4 52.8 71.2 53.6C78.1333 56 83.7333 55.3333 88 52L101 50.8L88 49Z"/>
++    <path d="M129 19C124.2 15 117.8 13.9333 110 15.8C113.733 17.1333 116.2 18.6 117.4 20.2C116.2 21.8 113.733 23.1333 110 24.2C117.8 26.3333 124.2 25.2667 129 21L144 20.2L129 19Z"/>
++    <path d="M156 43C151.2 39 144.8 37.9333 137 39.8C140.733 41.1333 143.2 42.6 144.4 44.2C143.2 45.8 140.733 47.1333 137 48.2C144.8 50.3333 151.2 49.2667 156 45L171 44.2L156 43Z"/>
++    <path d="M192 26C187.733 22.8 182.133 21.9333 175.2 23.4C178.4 24.4667 180.667 25.8 182 27.4C180.667 28.7333 178.4 29.8 175.2 30.6C182.133 33 187.733 32.3333 192 29L205 27.8L192 26Z"/>
++    <path d="M220 38C216.267 35.3333 211.2 34.8 204.8 36.4C207.467 37.4667 209.467 38.5333 210.8 39.6C209.467 40.9333 207.467 42 204.8 42.8C211.2 44.9333 216.267 44.2667 220 40.8L220 38Z"/>
++  </g>
++</svg>
+diff -ruN a/src/app/home-natural.module.css b/src/app/home-natural.module.css
+--- a/src/app/home-natural.module.css	1970-01-01 00:00:00.000000000 +0000
++++ b/src/app/home-natural.module.css	2026-08-02 13:09:02.376439449 +0000
+@@ -0,0 +1,400 @@
++.page {
++  padding: 28px 0 92px;
++  background:
++    radial-gradient(circle at top left, rgba(182, 168, 144, 0.14), transparent 28%),
++    #efe8dc;
++}
++
++.heroSection {
++  padding-top: 18px;
++}
++
++.heroGrid {
++  display: grid;
++  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.95fr);
++  gap: 26px;
++  align-items: start;
++}
++
++.heroCard,
++.sidePanel,
++.productCard,
++.miniCard,
++.galleryPanel,
++.materialBox {
++  border: 1px solid rgba(25, 61, 48, 0.08);
++  border-radius: 28px;
++  background: rgba(255, 255, 255, 0.72);
++  box-shadow: 0 14px 40px rgba(57, 64, 48, 0.08);
++}
++
++.heroCard {
++  position: relative;
++  padding: 22px 24px 26px;
++  overflow: hidden;
++}
++
++.heroTopnav {
++  padding: 6px 4px 18px;
++  display: flex;
++  flex-wrap: wrap;
++  gap: 24px;
++  border-bottom: 1px solid rgba(25, 61, 48, 0.12);
++}
++
++.heroTopnav a {
++  color: #31473b;
++  font-size: 0.95rem;
++  font-weight: 500;
++}
++
++.heroContent {
++  display: grid;
++  grid-template-columns: minmax(0, 0.82fr) minmax(320px, 1fr);
++  gap: 16px;
++  align-items: center;
++}
++
++.heroCopy {
++  padding: 34px 0 18px;
++}
++
++.heroCopy h1 {
++  max-width: 440px;
++  color: #17362c;
++  font-family: Georgia, "Times New Roman", serif;
++  font-size: clamp(3rem, 5.3vw, 5.2rem);
++  font-weight: 500;
++  line-height: 0.94;
++  letter-spacing: -0.05em;
++}
++
++.heroCopy p {
++  max-width: 420px;
++  margin-top: 24px;
++  color: #526255;
++  font-size: 1.05rem;
++  line-height: 1.65;
++}
++
++.heroActions {
++  margin-top: 30px;
++  display: flex;
++  flex-wrap: wrap;
++  align-items: center;
++  gap: 14px;
++}
++
++.secondaryLink {
++  display: inline-flex;
++  align-items: center;
++  gap: 8px;
++  color: #2b4739;
++  font-size: 0.92rem;
++  font-weight: 600;
++}
++
++.heroVisualWrap {
++  position: relative;
++  min-height: 470px;
++  display: grid;
++  align-items: end;
++}
++
++.heroVisual {
++  width: 100%;
++  max-height: 470px;
++  object-fit: contain;
++}
++
++.fishDecoration {
++  position: absolute;
++  left: -40px;
++  bottom: 38px;
++  width: 180px;
++  opacity: 0.22;
++}
++
++.floatingCard {
++  position: absolute;
++  right: 22px;
++  bottom: 30px;
++  width: 230px;
++  overflow: hidden;
++  border-radius: 22px;
++  background: rgba(255, 255, 255, 0.94);
++  box-shadow: 0 18px 44px rgba(54, 55, 39, 0.16);
++}
++
++.floatingCardImage {
++  padding: 12px;
++}
++
++.floatingCardImage img {
++  width: 100%;
++  aspect-ratio: 1.1;
++  object-fit: cover;
++  border-radius: 16px;
++}
++
++.floatingCardBody {
++  padding: 0 16px 16px;
++}
++
++.floatingCardBody a,
++.miniCardBody a,
++.productCardBody a {
++  display: block;
++  margin: 10px 0 8px;
++  color: #24352d;
++  font-size: 1rem;
++  font-weight: 700;
++  line-height: 1.3;
++}
++
++.floatingCardBody p,
++.miniCardBody p,
++.productCardBody p {
++  min-height: 44px;
++  color: #6a766b;
++  font-size: 0.88rem;
++  line-height: 1.5;
++}
++
++.floatingCardBody strong,
++.miniCardBody strong,
++.productCardBody strong {
++  display: inline-block;
++  margin-top: 12px;
++  color: #20634f;
++  font-size: 1rem;
++}
++
++.sidePanel {
++  padding: 18px 18px 22px;
++}
++
++.sidePanelHeading,
++.sectionHeading {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 16px;
++}
++
++.sidePanelHeading h2,
++.sectionHeading h2 {
++  color: #1f3a2e;
++  font-family: Georgia, "Times New Roman", serif;
++  font-size: clamp(1.8rem, 2.5vw, 3rem);
++  font-weight: 500;
++  letter-spacing: -0.04em;
++}
++
++.sidePanelHeading a {
++  color: #4a5c50;
++  font-size: 0.86rem;
++  font-weight: 600;
++}
++
++.sidePanelList {
++  margin-top: 16px;
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 14px;
++}
++
++.miniCard,
++.productCard {
++  overflow: hidden;
++}
++
++.miniCardImage,
++.productCardImage {
++  position: relative;
++  padding: 10px;
++}
++
++.miniCardImage img,
++.productCardImage img {
++  width: 100%;
++  aspect-ratio: 0.98;
++  object-fit: cover;
++  border-radius: 16px;
++}
++
++.miniCardBody,
++.productCardBody {
++  padding: 0 14px 16px;
++}
++
++.tag {
++  display: inline-flex;
++  align-items: center;
++  min-height: 28px;
++  padding: 0 10px;
++  border-radius: 999px;
++  color: white;
++  background: rgba(26, 59, 47, 0.88);
++  font-size: 0.72rem;
++  font-weight: 600;
++}
++
++.miniCardImage .tag,
++.productCardImage .tag {
++  position: absolute;
++  top: 20px;
++  left: 20px;
++}
++
++.catalogSection {
++  padding-top: 28px;
++}
++
++.catalogGrid {
++  display: grid;
++  grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.9fr);
++  gap: 26px;
++  align-items: start;
++}
++
++.productRow {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 18px;
++  margin-top: 16px;
++}
++
++.galleryPanel {
++  padding: 18px;
++}
++
++.inspirationGrid {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 12px;
++  margin-top: 18px;
++}
++
++.inspirationItem {
++  overflow: hidden;
++  border-radius: 18px;
++  background: rgba(255, 255, 255, 0.75);
++}
++
++.inspirationItem img {
++  width: 100%;
++  aspect-ratio: 1.05;
++  object-fit: cover;
++}
++
++.inspirationItem span {
++  display: block;
++  padding: 10px 10px 12px;
++  color: #31473a;
++  font-size: 0.84rem;
++  font-weight: 600;
++}
++
++.materialBox {
++  margin-top: 16px;
++  padding: 18px 20px;
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 16px;
++}
++
++.materialBox strong {
++  display: inline-block;
++  margin-bottom: 8px;
++  color: #24392f;
++  font-size: 0.95rem;
++}
++
++.materialBox ul {
++  margin: 0;
++  padding-left: 18px;
++  color: #657369;
++  line-height: 1.7;
++  font-size: 0.88rem;
++}
++
++@media (max-width: 1180px) {
++  .heroGrid,
++  .catalogGrid,
++  .heroContent {
++    grid-template-columns: 1fr;
++  }
++
++  .sidePanelList,
++  .productRow {
++    grid-template-columns: repeat(3, minmax(0, 1fr));
++  }
++
++  .heroVisualWrap {
++    min-height: 360px;
++  }
++
++  .floatingCard {
++    position: relative;
++    right: auto;
++    bottom: auto;
++    margin: 18px 0 0 auto;
++    width: min(240px, 100%);
++  }
++}
++
++@media (max-width: 860px) {
++  .sidePanelList,
++  .productRow,
++  .inspirationGrid,
++  .materialBox {
++    grid-template-columns: 1fr 1fr;
++  }
++
++  .heroCopy h1 {
++    font-size: 3rem;
++  }
++}
++
++@media (max-width: 640px) {
++  .page {
++    padding: 18px 0 72px;
++  }
++
++  .heroCard,
++  .sidePanel,
++  .galleryPanel,
++  .productCard,
++  .miniCard,
++  .materialBox {
++    border-radius: 22px;
++  }
++
++  .heroTopnav {
++    gap: 14px;
++  }
++
++  .heroCopy {
++    padding-top: 22px;
++  }
++
++  .heroCopy h1 {
++    font-size: 2.4rem;
++  }
++
++  .heroCopy p {
++    font-size: 0.96rem;
++  }
++
++  .sidePanelList,
++  .productRow,
++  .inspirationGrid,
++  .materialBox {
++    grid-template-columns: 1fr;
++  }
++
++  .fishDecoration {
++    display: none;
++  }
++}
+diff -ruN a/src/app/page.tsx b/src/app/page.tsx
+--- a/src/app/page.tsx	2026-08-02 13:09:02.376439449 +0000
++++ b/src/app/page.tsx	2026-08-02 13:09:02.376439449 +0000
+@@ -1,68 +1,184 @@
+ import Link from "next/link";
+-import { ArrowRight, Box, CreditCard, PackageCheck, ShieldCheck, Truck } from "lucide-react";
+-import { ProductCard } from "@/components/store/product-card";
++import { ArrowRight } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+-import { categories } from "@/data/categories";
+ import { products } from "@/data/products";
+ import { formatCurrency } from "@/lib/formatters";
++import styles from "./home-natural.module.css";
+ 
+-const serviceNotes = [
+-  { icon: ShieldCheck, label: "Produk terkurasi", detail: "Spesifikasi jelas untuk kebutuhan yang tepat." },
+-  { icon: Truck, label: "Kurir fleksibel", detail: "Reguler, ekspres, atau ambil langsung." },
+-  { icon: CreditCard, label: "Pembayaran lengkap", detail: "Transfer, QRIS, dan COD." },
+-  { icon: PackageCheck, label: "Resi & tracking", detail: "Status paket tersusun dalam satu alur." },
++const topCards = products.slice(0, 3);
++const bottomCards = products.slice(3, 6);
++const levelLabels = ["Beginner", "Intermediate", "Expert"];
++
++const inspirations = [
++  {
++    title: "Aquascape Natural",
++    image: "/brand/hero-aquarium.svg",
++  },
++  {
++    title: "Akar & Batu",
++    image: products[0]?.image ?? "/brand/hero-aquarium.svg",
++  },
++  {
++    title: "Tanaman Air",
++    image: products[1]?.image ?? "/brand/hero-aquarium.svg",
++  },
++  {
++    title: "Setup Mini",
++    image: products[2]?.image ?? "/brand/hero-aquarium.svg",
++  },
+ ];
+ 
+ export default function HomePage() {
+-  const featured = products.filter((product) => product.isFeatured).slice(0, 6);
+-  const heroProduct = products.find((product) => product.slug.includes("filter-box")) ?? products[0];
++  const heroSpotlight = products[2] ?? products[0];
+ 
+   return (
+-    <>
+-      <section className="home-hero">
+-        <div className="shell home-hero__grid">
+-          <div className="home-hero__copy">
+-            <span className="hero-index">01 / AQUARIUM SUPPLY</span>
+-            <h1>Peralatan yang tepat untuk air yang tetap hidup.</h1>
+-            <p>Berkah Oyot membantu penghobi memilih filtrasi, mesin, lampu, dan kebutuhan perawatan tanpa harus menebak-nebak spesifikasi.</p>
+-            <div className="home-hero__actions"><Button href="/catalog">Lihat katalog <ArrowRight size={18} /></Button><Link href="/tracking" className="inline-link">Lacak pesanan <ArrowRight size={16} /></Link></div>
+-            <div className="home-hero__meta"><span><b>90+</b> produk pilihan</span><span><b>6</b> kategori utama</span><span><b>4.8</b> kepuasan toko</span></div>
+-          </div>
+-          <div className="home-hero__stage">
+-            <div className="stage-label"><span>FEATURED / 2026</span><strong>{heroProduct.shortName}</strong></div>
+-            <div className="stage-image"><img src={heroProduct.image} alt={heroProduct.name} /></div>
+-            <div className="stage-price"><small>Mulai dari</small><strong>{formatCurrency(heroProduct.price)}</strong><Link href={`/products/${heroProduct.slug}`}>Lihat produk <ArrowRight size={15} /></Link></div>
++    <div className={styles.page}>
++      <section className={styles.heroSection}>
++        <div className="shell">
++          <div className={styles.heroGrid}>
++            <div className={styles.heroCard}>
++              <div className={styles.heroTopnav}>
++                <Link href="/catalog?category=fish">Ikan</Link>
++                <Link href="/catalog?category=plant">Tanaman</Link>
++                <Link href="/catalog?category=decoration">Akar &amp; Batu</Link>
++                <Link href="/catalog">Perlengkapan</Link>
++                <Link href="/tracking">Edukasi</Link>
++              </div>
++
++              <div className={styles.heroContent}>
++                <div className={styles.heroCopy}>
++                  <h1>Harmoni Alam di Dalam Kaca</h1>
++                  <p>
++                    Kurasi ikan, kayu oyot, tanaman air, dan perlengkapan akuarium
++                    untuk membangun aquascape yang lebih hidup.
++                  </p>
++                  <div className={styles.heroActions}>
++                    <Button href="/catalog">Mulai Belanja</Button>
++                    <Link href="/register" className={styles.secondaryLink}>
++                      Buat akun pelanggan <ArrowRight size={16} />
++                    </Link>
++                  </div>
++                </div>
++
++                <div className={styles.heroVisualWrap}>
++                  <img
++                    src="/brand/hero-aquarium.svg"
++                    alt="Aquascape Berkah Oyot"
++                    className={styles.heroVisual}
++                  />
++                </div>
++              </div>
++
++              <img
++                src="/brand/fish-school.svg"
++                alt=""
++                aria-hidden="true"
++                className={styles.fishDecoration}
++              />
++
++              <article className={styles.floatingCard}>
++                <div className={styles.floatingCardImage}>
++                  <img src={heroSpotlight.image} alt={heroSpotlight.name} />
++                </div>
++                <div className={styles.floatingCardBody}>
++                  <span className={styles.tag}>{levelLabels[1]}</span>
++                  <Link href={`/products/${heroSpotlight.slug}`}>
++                    {heroSpotlight.shortName}
++                  </Link>
++                  <p>{heroSpotlight.shortDescription}</p>
++                  <strong>{formatCurrency(heroSpotlight.price)}</strong>
++                </div>
++              </article>
++            </div>
++
++            <aside className={styles.sidePanel}>
++              <div className={styles.sidePanelHeading}>
++                <h2>Produk Pilihan</h2>
++                <Link href="/catalog">See All</Link>
++              </div>
++
++              <div className={styles.sidePanelList}>
++                {topCards.map((product, index) => (
++                  <article key={product.id} className={styles.miniCard}>
++                    <div className={styles.miniCardImage}>
++                      <img src={product.image} alt={product.name} />
++                      <span className={styles.tag}>{levelLabels[index] ?? "Pilihan"}</span>
++                    </div>
++                    <div className={styles.miniCardBody}>
++                      <Link href={`/products/${product.slug}`}>{product.shortName}</Link>
++                      <p>{product.shortDescription}</p>
++                      <strong>{formatCurrency(product.price)}</strong>
++                    </div>
++                  </article>
++                ))}
++              </div>
++            </aside>
+           </div>
+         </div>
+       </section>
+ 
+-      <section className="service-rail">
+-        <div className="shell service-rail__grid">{serviceNotes.map(({ icon: Icon, label, detail }) => <article key={label}><Icon size={20} /><div><strong>{label}</strong><span>{detail}</span></div></article>)}</div>
+-      </section>
+-
+-      <section className="section shell category-section">
+-        <div className="editorial-heading"><div><span className="section-kicker">BELANJA BERDASARKAN KEBUTUHAN</span><h2>Temukan komponen berdasarkan sistem akuarium Anda.</h2></div><Link href="/catalog" className="inline-link">Semua kategori <ArrowRight size={16} /></Link></div>
+-        <div className="category-editorial-grid">{categories.map((category, index) => <Link key={category.id} href={`/catalog?category=${category.id}`} className="category-editorial-card"><span className="category-number">0{index + 1}</span><div className="category-symbol">{category.icon}</div><div><h3>{category.name}</h3><p>{category.description}</p></div><ArrowRight size={18} /></Link>)}</div>
+-      </section>
+-
+-      <section className="section product-showcase">
++      <section className={styles.catalogSection}>
+         <div className="shell">
+-          <div className="editorial-heading"><div><span className="section-kicker">PILIHAN BERKAH OYOT</span><h2>Produk yang sering dicari untuk setup harian.</h2></div><Link href="/catalog" className="inline-link">Lihat katalog <ArrowRight size={16} /></Link></div>
+-          <div className="product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} />)}</div>
++          <div className={styles.catalogGrid}>
++            <div>
++              <div className={styles.sectionHeading}>
++                <h2>Koleksi Pilihan</h2>
++              </div>
++              <div className={styles.productRow}>
++                {bottomCards.map((product, index) => (
++                  <article key={product.id} className={styles.productCard}>
++                    <div className={styles.productCardImage}>
++                      <img src={product.image} alt={product.name} />
++                      <span className={styles.tag}>{levelLabels[index] ?? "Pilihan"}</span>
++                    </div>
++                    <div className={styles.productCardBody}>
++                      <Link href={`/products/${product.slug}`}>{product.shortName}</Link>
++                      <p>{product.shortDescription}</p>
++                      <strong>{formatCurrency(product.price)}</strong>
++                    </div>
++                  </article>
++                ))}
++              </div>
++            </div>
++
++            <div className={styles.galleryPanel}>
++              <div className={styles.sectionHeading}>
++                <h2>Inspirasi Galeri</h2>
++              </div>
++
++              <div className={styles.inspirationGrid}>
++                {inspirations.map((item) => (
++                  <article key={item.title} className={styles.inspirationItem}>
++                    <img src={item.image} alt={item.title} />
++                    <span>{item.title}</span>
++                  </article>
++                ))}
++              </div>
++
++              <div className={styles.materialBox}>
++                <div>
++                  <strong>Material</strong>
++                  <ul>
++                    <li>Aquascape</li>
++                    <li>Tanaman Oyot</li>
++                    <li>Akar &amp; Batu</li>
++                    <li>Perlengkapan</li>
++                  </ul>
++                </div>
++                <div>
++                  <strong>Kategori</strong>
++                  <ul>
++                    <li>Ikan Hias</li>
++                    <li>Tanaman Air</li>
++                    <li>Hardscape</li>
++                    <li>Aksesori</li>
++                  </ul>
++                </div>
++              </div>
++            </div>
++          </div>
+         </div>
+       </section>
+-
+-      <section className="section shell buying-guide">
+-        <div className="buying-guide__visual"><img src="/brand/hero-aquarium.svg" alt="Ilustrasi susunan akuarium" /><span>SETUP NOTE / 001</span></div>
+-        <div className="buying-guide__copy"><span className="section-kicker">BELANJA DENGAN KONTEKS</span><h2>Bukan sekadar memilih produk. Mulai dari kebutuhan sistemnya.</h2><p>Kenali kapasitas akuarium, jenis ikan, debit air, dan media filtrasi sebelum menentukan pompa atau filter. Struktur katalog dibuat agar produk mudah dibandingkan berdasarkan fungsi.</p><ul><li><Box size={18} /> Informasi SKU dan stok tersedia</li><li><Truck size={18} /> Estimasi kurir terlihat sebelum pembayaran</li><li><PackageCheck size={18} /> Resi dapat dicetak atau diunduh setelah pesanan dibuat</li></ul><Button href="/catalog" variant="secondary">Mulai memilih produk</Button></div>
+-      </section>
+-
+-      <section className="section shell promo-editorial">
+-        <div><span className="section-kicker section-kicker--light">PROGRAM PROMO</span><h2>Gunakan kode <em>AQUA10</em> untuk mendapatkan potongan belanja.</h2><p>Potongan 10% dengan nilai maksimal Rp25.000.</p></div>
+-        <div className="promo-code"><span>PROMO CODE</span><strong>AQUA10</strong><Link href="/catalog">Gunakan sekarang <ArrowRight size={15} /></Link></div>
+-      </section>
+-
+-      <section className="section home-closing"><div className="shell"><span>BERKAH OYOT / AQUARIUM SUPPLY</span><h2>Mulai dari air yang jernih.<br />Bangun ekosistem yang stabil.</h2><Button href="/catalog">Belanja perlengkapan <ArrowRight size={18} /></Button></div></section>
+-    </>
++    </div>
+   );
+ }

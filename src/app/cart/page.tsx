@@ -12,7 +12,7 @@ export default function CartPage() {
   const estimate = subtotal >= 300000 ? 0 : 18000;
 
   if (!hydrated) return <div className="shell loading-state">Memuat keranjang...</div>;
-  if (!displayLines.length) return <section className="shell empty-state"><ShoppingBag size={48} /><span className="eyebrow">Keranjang kosong</span><h1>Belum ada produk yang dipilih.</h1><p>Tambahkan produk dari katalog untuk memulai simulasi checkout.</p><Button href="/catalog">Buka katalog</Button></section>;
+  if (!displayLines.length) return <section className="shell empty-state"><ShoppingBag size={48} /><span className="eyebrow">Keranjang kosong</span><h1>Belum ada produk yang dipilih.</h1><p>Tambahkan produk dari katalog untuk melanjutkan ke checkout.</p><Button href="/catalog">Buka katalog</Button></section>;
 
   return (
     <section className="section shell">

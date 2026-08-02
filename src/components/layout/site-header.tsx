@@ -6,18 +6,12 @@ import { useState } from "react";
 import { useAuth } from "@/context/auth-provider";
 import { useStore } from "@/context/store-provider";
 
-const nav = [
-  { href: "/", label: "Beranda" },
-  { href: "/catalog", label: "Katalog" },
-  { href: "/tracking", label: "Lacak Pesanan" },
-];
-
-const categoryNav = [
+const shopNav = [
   { href: "/catalog?category=filter", label: "Filtrasi" },
   { href: "/catalog?category=machine", label: "Mesin & Pompa" },
-  { href: "/catalog?category=lighting", label: "Lampu" },
+  { href: "/catalog?category=lighting", label: "Pencahayaan" },
   { href: "/catalog?category=decoration", label: "Dekorasi" },
-  { href: "/catalog?category=food-medicine", label: "Pakan & Obat" },
+  { href: "/catalog?category=food-medicine", label: "Perawatan" },
 ];
 
 export function SiteHeader() {
@@ -30,7 +24,10 @@ export function SiteHeader() {
       <div className="utility-bar no-print">
         <div className="shell utility-bar__inner">
           <span>Pengiriman dari Sukoharjo</span>
-          <span>Senin–Sabtu</span>
+          <div>
+            <Link href="/tracking">Lacak pesanan</Link>
+            <span>Senin–Sabtu</span>
+          </div>
         </div>
       </div>
 
@@ -39,67 +36,48 @@ export function SiteHeader() {
           <Link href="/" className="brand" aria-label="Berkah Oyot">
             <img src="/brand/logo-mark.svg" alt="" />
             <div>
-              <strong>BERKAH OYOT</strong>
-              <span>Premium Aquarium Store</span>
+              <strong>Berkah Oyot</strong>
+              <span>Aquarium Store</span>
             </div>
           </Link>
 
-          <nav className="desktop-nav">
-            {nav.map((item) => (
-              <Link href={item.href} key={item.href}>
-                {item.label}
-              </Link>
+          <nav className="desktop-nav" aria-label="Kategori produk">
+            {shopNav.map((item) => (
+              <Link href={item.href} key={item.href}>{item.label}</Link>
             ))}
+            <Link href="/catalog">Semua Produk</Link>
           </nav>
 
           <div className="header-actions">
-            <Link href="/catalog" className="header-search-chip" aria-label="Cari produk">
-              <Search size={16} />
-              <span>Cari produk</span>
+            <Link href="/catalog" className="header-action" aria-label="Cari produk">
+              <Search size={19} />
             </Link>
-
-            <Link href={user ? "/account" : "/login"} className="account-link" aria-label="Akun pelanggan">
-              <UserRound size={18} />
+            <Link href={user ? "/account" : "/login"} className="header-action account-link" aria-label="Akun pelanggan">
+              <UserRound size={19} />
               <span>{hydrated && user ? user.profile.fullName.split(" ")[0] : "Masuk"}</span>
             </Link>
-
             <Link href="/cart" className="header-action cart-link" aria-label="Keranjang">
               <ShoppingBag size={19} />
               <span>{itemCount}</span>
             </Link>
-
             <button className="mobile-menu-button" onClick={() => setOpen((value) => !value)} aria-label="Menu">
               {open ? <X size={22} /> : <Menu size={22} />}
             </button>
           </div>
         </div>
 
-        <div className="category-nav-wrap">
-          <nav className="shell category-nav">
-            {categoryNav.map((item) => (
-              <Link href={item.href} key={item.href}>
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/catalog" className="category-nav__all">
-              Semua produk
-            </Link>
-          </nav>
-        </div>
-
         {open && (
           <nav className="mobile-nav shell">
-            {nav.map((item) => (
-              <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>
-                {item.label}
-              </Link>
+            <Link href="/" onClick={() => setOpen(false)}>Beranda</Link>
+            {shopNav.map((item) => (
+              <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}</Link>
             ))}
+            <Link href="/catalog" onClick={() => setOpen(false)}>Semua produk</Link>
+            <Link href="/tracking" onClick={() => setOpen(false)}>Lacak pesanan</Link>
             <Link href={user ? "/account" : "/login"} onClick={() => setOpen(false)}>
               {user ? "Akun saya" : "Masuk / Daftar"}
             </Link>
-            <Link href="/cart" onClick={() => setOpen(false)}>
-              Keranjang ({itemCount})
-            </Link>
+            <Link href="/cart" onClick={() => setOpen(false)}>Keranjang ({itemCount})</Link>
           </nav>
         )}
       </header>
