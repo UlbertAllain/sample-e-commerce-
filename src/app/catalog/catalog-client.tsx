@@ -4,13 +4,13 @@ import { Search, SlidersHorizontal } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState, type ChangeEvent } from "react";
 import { ProductCard } from "@/components/store/product-card";
-import { categories } from "@/data/categories";
-import { products } from "@/data/products";
+import { useCatalog } from "@/context/catalog-provider";
 import type { ProductCategory } from "@/types/commerce";
 
 type SortMode = "featured" | "price-asc" | "price-desc" | "popular";
 
 export function CatalogClient() {
+  const { products, categories, loading } = useCatalog();
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") as ProductCategory | null;
   const [category, setCategory] = useState<ProductCategory | "all">(initialCategory ?? "all");
@@ -28,7 +28,7 @@ export function CatalogClient() {
         if (sort === "popular") return b.sold - a.sold;
         return Number(Boolean(b.isFeatured)) - Number(Boolean(a.isFeatured));
       });
-  }, [category, query, sort]);
+  }, [category, products, query, sort]);
 
   return (
     <>
@@ -45,7 +45,7 @@ export function CatalogClient() {
             <select value={sort} onChange={(event: ChangeEvent<HTMLSelectElement>) => setSort(event.target.value as SortMode)} aria-label="Urutkan produk"><option value="featured">Produk unggulan</option><option value="popular">Paling populer</option><option value="price-asc">Harga terendah</option><option value="price-desc">Harga tertinggi</option></select>
           </div>
           <div className="catalog-count"><strong>{filtered.length} produk</strong><span>siap dipilih</span></div>
-          {filtered.length ? <div className="product-grid product-grid--catalog">{filtered.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <div className="empty-card"><h2>Produk tidak ditemukan</h2><p>Coba gunakan kata kunci atau kategori lain.</p></div>}
+          {loading ? <div className="loading-state">Memuat katalog...</div> : filtered.length ? <div className="product-grid product-grid--catalog">{filtered.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <div className="empty-card"><h2>Produk tidak ditemukan</h2><p>Coba gunakan kata kunci atau kategori lain.</p></div>}
         </div>
       </section>
     </>

@@ -1,13 +1,14 @@
 {
   "name": "berkah-oyot-storefront-sample",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "admin:create": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "cloudinary": "^2.10.0",
@@ -16,7 +17,8 @@
     "next": "16.2.12",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "zod": "^4.1.5"
+    "zod": "^4.1.5",
+    "firebase-admin": "14.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",

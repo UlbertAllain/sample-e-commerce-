@@ -1,0 +1,1732 @@
+diff --git a/src/app/admin/(dashboard)/inventory/inventory-client.tsx b/src/app/admin/(dashboard)/inventory/inventory-client.tsx
+index f8d3134..97ecec2 100644
+--- a/src/app/admin/(dashboard)/inventory/inventory-client.tsx
++++ b/src/app/admin/(dashboard)/inventory/inventory-client.tsx
+@@ -1,10 +1,10 @@
+ "use client";
+ 
+ import { ArrowDownToLine, ArrowUpFromLine, RotateCcw, Save } from "lucide-react";
+-import { FormEvent, useEffect, useState } from "react";
++import { FormEvent, useEffect, useMemo, useState } from "react";
+ import { ApiClientError, apiFetch } from "@/lib/api/client";
+ import { formatDateTime } from "@/lib/formatters";
+-import type { InventoryMovement, InventoryMovementType, Product } from "@/types/commerce";
++import type { InventoryMovement, InventoryMovementType, Product, ProductVariant } from "@/types/commerce";
+ 
+ type AdjustmentType = "adjustment-in" | "adjustment-out" | "return";
+ 
+@@ -13,6 +13,12 @@ type InventorySnapshot = {
+   movements: InventoryMovement[];
+ };
+ 
++type StockItem = {
++  key: string;
++  product: Product;
++  variant?: ProductVariant;
++};
++
+ const movementLabels: Record<InventoryMovementType, string> = {
+   sale: "Penjualan",
+   "adjustment-in": "Stok masuk",
+@@ -33,6 +39,7 @@ export function AdminInventoryClient() {
+   const [products, setProducts] = useState<Product[]>([]);
+   const [movements, setMovements] = useState<InventoryMovement[]>([]);
+   const [productId, setProductId] = useState("");
++  const [variantId, setVariantId] = useState("");
+   const [type, setType] = useState<AdjustmentType>("adjustment-in");
+   const [quantity, setQuantity] = useState("1");
+   const [reason, setReason] = useState("");
+@@ -43,6 +50,7 @@ export function AdminInventoryClient() {
+     setProducts(snapshot.products);
+     setMovements(snapshot.movements);
+     setProductId((current) => current || snapshot.products[0]?.id || "");
++    setVariantId((current) => current || snapshot.products[0]?.variants?.find((variant) => variant.isActive !== false)?.id || "");
+   }
+ 
+   async function reloadInventory() {
+@@ -62,6 +70,7 @@ export function AdminInventoryClient() {
+         setProducts(snapshot.products);
+         setMovements(snapshot.movements);
+         setProductId((current) => current || snapshot.products[0]?.id || "");
++        setVariantId((current) => current || snapshot.products[0]?.variants?.find((variant) => variant.isActive !== false)?.id || "");
+       })
+       .catch((caught: unknown) => {
+         if (!cancelled) setMessage(caught instanceof Error ? caught.message : "Inventori gagal dimuat.");
+@@ -79,7 +88,7 @@ export function AdminInventoryClient() {
+     try {
+       await apiFetch<InventoryMovement>("/api/admin/inventory/adjustments", {
+         method: "POST",
+-        body: JSON.stringify({ productId, type, quantity, reason }),
++        body: JSON.stringify({ productId, variantId: variantId || undefined, type, quantity, reason }),
+       });
+       setQuantity("1");
+       setReason("");
+@@ -93,6 +102,19 @@ export function AdminInventoryClient() {
+   }
+ 
+   const selected = products.find((product) => product.id === productId);
++  const selectedVariants = (selected?.variants ?? []).filter((variant) => variant.isActive !== false);
++  const selectedVariant = selectedVariants.find((variant) => variant.id === variantId) ?? selectedVariants[0];
++  const stockItems = useMemo<StockItem[]>(() => products.flatMap<StockItem>((product) => {
++    const variants = (product.variants ?? []).filter((variant) => variant.isActive !== false);
++    if (!variants.length) return [{ key: product.id, product, variant: undefined }];
++    return variants.map((variant) => ({ key: `${product.id}-${variant.id}`, product, variant }));
++  }).sort((a, b) => (a.variant?.stock ?? a.product.stock) - (b.variant?.stock ?? b.product.stock)), [products]);
++
++  function chooseProduct(nextProductId: string) {
++    const product = products.find((item) => item.id === nextProductId);
++    setProductId(nextProductId);
++    setVariantId((product?.variants ?? []).find((variant) => variant.isActive !== false)?.id ?? "");
++  }
+ 
+   return (
+     <>
+@@ -101,14 +123,15 @@ export function AdminInventoryClient() {
+       <section className="admin-grid-two admin-grid-two--inventory">
+         <form className="admin-panel admin-form" onSubmit={submit}>
+           <div className="admin-panel__heading"><div><span>PENYESUAIAN STOK</span><h2>Catat mutasi manual</h2></div></div>
+-          <label>Produk<select value={productId} onChange={(event) => setProductId(event.target.value)} required>{products.map((product) => <option key={product.id} value={product.id}>{product.shortName} · {product.sku}</option>)}</select></label>
+-          {selected && <div className="admin-selected-stock"><img src={selected.image} alt="" /><div><strong>{selected.shortName}</strong><span>Stok saat ini</span></div><b>{selected.stock}</b></div>}
++          <label>Produk<select value={productId} onChange={(event) => chooseProduct(event.target.value)} required>{products.map((product) => <option key={product.id} value={product.id}>{product.shortName} · {product.sku}</option>)}</select></label>
++          {selectedVariants.length > 0 && <label>Varian<select value={selectedVariant?.id ?? ""} onChange={(event) => setVariantId(event.target.value)} required>{selectedVariants.map((variant) => <option key={variant.id} value={variant.id}>{variant.name} · {variant.sku}</option>)}</select></label>}
++          {selected && <div className="admin-selected-stock"><img src={selected.image} alt="" /><div><strong>{selected.shortName}{selectedVariant ? ` · ${selectedVariant.name}` : ""}</strong><span>Stok saat ini</span></div><b>{selectedVariant?.stock ?? selected.stock}</b></div>}
+           <div className="admin-adjustment-types">
+             <button type="button" className={type === "adjustment-in" ? "active" : ""} onClick={() => setType("adjustment-in")}><ArrowDownToLine size={18} /> Stok masuk</button>
+             <button type="button" className={type === "adjustment-out" ? "active" : ""} onClick={() => setType("adjustment-out")}><ArrowUpFromLine size={18} /> Stok keluar</button>
+             <button type="button" className={type === "return" ? "active" : ""} onClick={() => setType("return")}><RotateCcw size={18} /> Retur</button>
+           </div>
+-          <label>Jumlah<input type="number" min="1" value={quantity} onChange={(event) => setQuantity(event.target.value)} required /></label>
++          <label>Jumlah<input type="text" inputMode="numeric" value={quantity} onChange={(event) => setQuantity(event.target.value.replace(/\D+/g, ""))} required /></label>
+           <label>Alasan<textarea rows={4} value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Contoh: restock dari supplier" required /></label>
+           <button className="button button--primary" disabled={saving || !productId}><Save size={17} /> {saving ? "Mencatat..." : "Simpan mutasi"}</button>
+         </form>
+@@ -116,7 +139,11 @@ export function AdminInventoryClient() {
+         <div className="admin-panel">
+           <div className="admin-panel__heading"><div><span>RINGKASAN STOK</span><h2>Produk perlu perhatian</h2></div></div>
+           <div className="admin-stock-list">
+-            {products.slice().sort((a, b) => a.stock - b.stock).slice(0, 12).map((product) => <article key={product.id}><img src={product.image} alt="" /><div><strong>{product.shortName}</strong><span>{product.sku} · batas minimum {product.minimumStock ?? 5}</span></div><b className={product.stock <= (product.minimumStock ?? 5) ? "low" : ""}>{product.stock}</b></article>)}
++            {stockItems.slice(0, 12).map(({ key, product, variant }) => {
++              const stock = variant?.stock ?? product.stock;
++              const minimum = variant?.minimumStock ?? product.minimumStock ?? 5;
++              return <article key={key}><img src={product.image} alt="" /><div><strong>{product.shortName}{variant ? ` · ${variant.name}` : ""}</strong><span>{variant?.sku ?? product.sku} · batas minimum {minimum}</span></div><b className={stock <= minimum ? "low" : ""}>{stock}</b></article>;
++            })}
+           </div>
+         </div>
+       </section>
+@@ -124,7 +151,7 @@ export function AdminInventoryClient() {
+       <section className="admin-panel">
+         <div className="admin-panel__heading"><div><span>AUDIT INVENTORI</span><h2>Riwayat mutasi</h2></div><span>{movements.length} catatan terbaru</span></div>
+         <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Waktu</th><th>Produk</th><th>Jenis</th><th>Perubahan</th><th>Stok</th><th>Alasan</th></tr></thead><tbody>
+-          {movements.length ? movements.map((movement) => <tr key={movement.id}><td>{formatDateTime(movement.createdAt)}</td><td><strong>{movement.productName}</strong><small>{movement.sku}</small></td><td><span className={`admin-badge ${movement.type}`}>{movementLabels[movement.type]}</span></td><td><strong className={movement.quantity >= 0 ? "admin-positive" : "admin-negative"}>{movement.quantity >= 0 ? "+" : ""}{movement.quantity}</strong></td><td>{movement.stockBefore} → {movement.stockAfter}</td><td>{movement.reason}</td></tr>) : <tr><td colSpan={6}>Belum ada mutasi stok.</td></tr>}
++          {movements.length ? movements.map((movement) => <tr key={movement.id}><td>{formatDateTime(movement.createdAt)}</td><td><strong>{movement.productName}{movement.variantName ? ` · ${movement.variantName}` : ""}</strong><small>{movement.sku}</small></td><td><span className={`admin-badge ${movement.type}`}>{movementLabels[movement.type]}</span></td><td><strong className={movement.quantity >= 0 ? "admin-positive" : "admin-negative"}>{movement.quantity >= 0 ? "+" : ""}{movement.quantity}</strong></td><td>{movement.stockBefore} → {movement.stockAfter}</td><td>{movement.reason}</td></tr>) : <tr><td colSpan={6}>Belum ada mutasi stok.</td></tr>}
+         </tbody></table></div>
+       </section>
+     </>
+diff --git a/src/app/admin/(dashboard)/orders/[id]/order-detail-client.tsx b/src/app/admin/(dashboard)/orders/[id]/order-detail-client.tsx
+index 5913b67..2691db5 100644
+--- a/src/app/admin/(dashboard)/orders/[id]/order-detail-client.tsx
++++ b/src/app/admin/(dashboard)/orders/[id]/order-detail-client.tsx
+@@ -73,7 +73,7 @@ export function AdminOrderDetailClient({ identifier }: { identifier: string }) {
+       <div className="admin-order-grid">
+         <div className="admin-panel">
+           <div className="admin-panel__heading"><div><span>ITEM PESANAN</span><h2>{order.items.reduce((total, item) => total + item.quantity, 0)} barang</h2></div></div>
+-          <div className="admin-order-items">{order.items.map((line) => <article key={line.product.id}><img src={line.product.image} alt="" /><div><strong>{line.product.shortName}</strong><span>{line.product.sku} · {line.quantity} × {formatCurrency(line.unitPrice)}</span></div><b>{formatCurrency(line.subtotal)}</b></article>)}</div>
++          <div className="admin-order-items">{order.items.map((line) => <article key={`${line.product.id}-${line.variant?.id ?? "default"}`}><img src={line.product.image} alt="" /><div><strong>{line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}</strong><span>{line.variant?.sku ?? line.product.sku} · {line.quantity} × {formatCurrency(line.unitPrice)}</span></div><b>{formatCurrency(line.subtotal)}</b></article>)}</div>
+           <div className="admin-order-totals"><div><span>Subtotal</span><strong>{formatCurrency(order.subtotal)}</strong></div><div><span>Diskon</span><strong>-{formatCurrency(order.discount)}</strong></div><div><span>Pengiriman</span><strong>{formatCurrency(order.shippingCost)}</strong></div><div><span>Total</span><strong>{formatCurrency(order.grandTotal)}</strong></div></div>
+         </div>
+ 
+@@ -95,7 +95,7 @@ export function AdminOrderDetailClient({ identifier }: { identifier: string }) {
+       <section className="order-card print-invoice admin-print-invoice" id="print-invoice">
+         <div className="invoice-brand"><img src="/brand/logo-mark.svg" alt="" /><div><strong>{order.sender.storeName.toUpperCase()}</strong><span>Invoice {order.orderNumber}</span></div></div>
+         <div className="invoice-meta"><div><span>DITAGIHKAN KEPADA</span><strong>{order.customer.fullName}</strong><p>{order.customer.address}, {order.customer.district}, {order.customer.city}, {order.customer.province} {order.customer.postalCode}</p><p>{order.customer.phone}</p></div><div><span>TANGGAL</span><strong>{formatDateTime(order.createdAt)}</strong><span>STATUS PEMBAYARAN</span><strong>{order.paymentStatus.toUpperCase()}</strong></div></div>
+-        <div className="invoice-table"><div className="invoice-row invoice-row--head"><span>Produk</span><span>Qty</span><span>Harga</span><span>Subtotal</span></div>{order.items.map((line) => <div className="invoice-row" key={line.product.id}><span>{line.product.shortName}<small>{line.product.sku}</small></span><span>{line.quantity}</span><span>{formatCurrency(line.unitPrice)}</span><span>{formatCurrency(line.subtotal)}</span></div>)}</div>
++        <div className="invoice-table"><div className="invoice-row invoice-row--head"><span>Produk</span><span>Qty</span><span>Harga</span><span>Subtotal</span></div>{order.items.map((line) => <div className="invoice-row" key={`${line.product.id}-${line.variant?.id ?? "default"}`}><span>{line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}<small>{line.variant?.sku ?? line.product.sku}</small></span><span>{line.quantity}</span><span>{formatCurrency(line.unitPrice)}</span><span>{formatCurrency(line.subtotal)}</span></div>)}</div>
+         <div className="invoice-totals"><div><span>Subtotal</span><strong>{formatCurrency(order.subtotal)}</strong></div><div><span>Diskon</span><strong>-{formatCurrency(order.discount)}</strong></div><div><span>Ongkir</span><strong>{formatCurrency(order.shippingCost)}</strong></div><div><span>Total</span><strong>{formatCurrency(order.grandTotal)}</strong></div></div>
+       </section>
+     </>
+diff --git a/src/app/admin/(dashboard)/products/products-client.tsx b/src/app/admin/(dashboard)/products/products-client.tsx
+index 2516476..3005674 100644
+--- a/src/app/admin/(dashboard)/products/products-client.tsx
++++ b/src/app/admin/(dashboard)/products/products-client.tsx
+@@ -72,7 +72,7 @@ export function AdminProductsClient() {
+       <section className="admin-panel">
+         <div className="admin-toolbar"><label><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cari produk, SKU, atau kategori" /></label><span>{filtered.length} produk</span></div>
+         <div className="admin-table-wrap"><table className="admin-table admin-product-table"><thead><tr><th>Produk</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+-          {loading ? <tr><td colSpan={6}>Memuat produk...</td></tr> : filtered.length ? filtered.map((product) => <tr key={product.id}><td><div className="admin-product-cell"><img src={product.image} alt="" /><div><strong>{product.shortName}</strong><small>{product.sku}</small></div></div></td><td>{product.categoryLabel}</td><td><strong>{formatCurrency(product.price)}</strong></td><td><span className={product.stock <= (product.minimumStock ?? 5) ? "admin-stock low" : "admin-stock"}>{product.stock}</span></td><td><span className={`admin-badge ${product.status}`}>{product.status}</span></td><td><div className="admin-row-actions"><Link href={`/admin/products/${product.id}`}><Edit3 size={16} /></Link><button onClick={() => archive(product)}><Archive size={16} /></button></div></td></tr>) : <tr><td colSpan={6}>Belum ada produk.</td></tr>}
++          {loading ? <tr><td colSpan={6}>Memuat produk...</td></tr> : filtered.length ? filtered.map((product) => <tr key={product.id}><td><div className="admin-product-cell"><img src={product.image} alt="" /><div><strong>{product.shortName}</strong><small>{product.sku}{product.variants?.length ? ` · ${product.variants.length} varian` : ""}</small></div></div></td><td>{product.categoryLabel}</td><td><strong>{product.variants?.length ? `Mulai ${formatCurrency(product.price)}` : formatCurrency(product.price)}</strong></td><td><span className={product.stock <= (product.minimumStock ?? 5) ? "admin-stock low" : "admin-stock"}>{product.stock}</span></td><td><span className={`admin-badge ${product.status}`}>{product.status}</span></td><td><div className="admin-row-actions"><Link href={`/admin/products/${product.id}`}><Edit3 size={16} /></Link><button onClick={() => archive(product)}><Archive size={16} /></button></div></td></tr>) : <tr><td colSpan={6}>Belum ada produk.</td></tr>}
+         </tbody></table></div>
+       </section>
+     </>
+diff --git a/src/app/cart/page.tsx b/src/app/cart/page.tsx
+index 041e7df..3897764 100644
+--- a/src/app/cart/page.tsx
++++ b/src/app/cart/page.tsx
+@@ -18,7 +18,7 @@ export default function CartPage() {
+     <section className="section shell">
+       <div className="page-heading"><div><span className="eyebrow">Keranjang belanja</span><h1>Periksa produk sebelum checkout</h1></div><Link href="/catalog"><ArrowLeft size={16} /> Lanjut belanja</Link></div>
+       <div className="cart-layout">
+-        <div className="cart-list">{displayLines.map((line) => <article className="cart-item" key={line.product.id}><img src={line.product.image} alt={line.product.name} /><div className="cart-item__content"><span className="eyebrow">{line.product.categoryLabel}</span><Link href={`/products/${line.product.slug}`}>{line.product.shortName}</Link><small>{line.product.sku}</small><div className="cart-item__controls"><QuantityStepper value={line.quantity} max={line.product.stock} onChange={(value) => updateQuantity(line.product.id, value)} /><button onClick={() => removeFromCart(line.product.id)}><Trash2 size={16} /> Hapus</button></div></div><div className="cart-item__price"><strong>{formatCurrency(line.subtotal)}</strong><span>{formatCurrency(line.unitPrice)} / pcs</span></div></article>)}</div>
++        <div className="cart-list">{displayLines.map((line) => <article className="cart-item" key={`${line.product.id}-${line.variant?.id ?? "default"}`}><img src={line.product.image} alt={line.product.name} /><div className="cart-item__content"><span className="eyebrow">{line.product.categoryLabel}</span><Link href={`/products/${line.product.slug}`}>{line.product.shortName}</Link><small>{line.variant ? `${line.variant.name} · ${line.variant.sku}` : line.product.sku}</small><div className="cart-item__controls"><QuantityStepper value={line.quantity} max={line.variant?.stock ?? line.product.stock} onChange={(value) => updateQuantity(line.product.id, value, line.variant?.id)} /><button onClick={() => removeFromCart(line.product.id, line.variant?.id)}><Trash2 size={16} /> Hapus</button></div></div><div className="cart-item__price"><strong>{formatCurrency(line.subtotal)}</strong><span>{formatCurrency(line.unitPrice)} / pcs</span></div></article>)}</div>
+         <aside className="summary-card"><h2>Ringkasan belanja</h2><div><span>Subtotal</span><strong>{formatCurrency(subtotal)}</strong></div><div><span>Estimasi ongkir</span><strong>{estimate === 0 ? "Gratis" : formatCurrency(estimate)}</strong></div><div className="summary-card__total"><span>Estimasi total</span><strong>{formatCurrency(subtotal + estimate)}</strong></div><p>Ongkir final dipilih pada tahap checkout.</p><Button href="/checkout" className="full-width">Lanjut checkout</Button><small>Data alamat akan diambil otomatis dari akun pelanggan.</small></aside>
+       </div>
+     </section>
+diff --git a/src/app/checkout/page.tsx b/src/app/checkout/page.tsx
+index 365cbaa..5f97fd1 100644
+--- a/src/app/checkout/page.tsx
++++ b/src/app/checkout/page.tsx
+@@ -110,7 +110,7 @@ export default function CheckoutPage() {
+       const order = await apiFetch<Order>("/api/store/orders", {
+         method: "POST",
+         body: JSON.stringify({
+-          items: displayLines.map((line) => ({ productId: line.product.id, quantity: line.quantity })),
++          items: displayLines.map((line) => ({ productId: line.product.id, variantId: line.variant?.id, quantity: line.quantity })),
+           shippingId: shipping.id,
+           paymentMethod,
+           voucherCode,
+@@ -322,10 +322,10 @@ export default function CheckoutPage() {
+ 
+           <div className="checkout-items">
+             {displayLines.map((line) => (
+-              <article key={line.product.id}>
++              <article key={`${line.product.id}-${line.variant?.id ?? "default"}`}>
+                 <img src={line.product.image} alt="" />
+                 <div>
+-                  <strong>{line.product.shortName}</strong>
++                  <strong>{line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}</strong>
+                   <span>
+                     {line.quantity} × {formatCurrency(line.unitPrice)}
+                   </span>
+diff --git a/src/app/globals.css b/src/app/globals.css
+index 55a076d..63d106a 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -2387,3 +2387,165 @@ body {
+   .admin-content { display: block; padding: 0; background: white; }
+   .admin-print-invoice { display: block !important; border: 0; box-shadow: none; }
+ }
++
++/* Product variants and cleaner numeric inputs */
++input[type="number"]::-webkit-inner-spin-button,
++input[type="number"]::-webkit-outer-spin-button {
++  margin: 0;
++  -webkit-appearance: none;
++}
++
++input[type="number"] {
++  appearance: textfield;
++  -moz-appearance: textfield;
++}
++
++.admin-form input[readonly] {
++  color: var(--muted);
++  background: color-mix(in srgb, var(--canvas) 82%, white);
++  cursor: default;
++}
++
++.admin-variant-toggle {
++  padding: 20px;
++  display: flex;
++  align-items: flex-start;
++  gap: 14px;
++  border: 1px solid var(--line);
++  border-radius: 18px;
++  background: var(--paper);
++}
++
++.admin-variant-toggle input {
++  width: 18px;
++  height: 18px;
++  margin-top: 2px;
++}
++
++.admin-variant-toggle span {
++  display: grid;
++  gap: 5px;
++}
++
++.admin-variant-toggle strong {
++  font-size: .92rem;
++}
++
++.admin-variant-toggle small,
++.admin-panel-note {
++  color: var(--muted);
++  font-size: .76rem;
++  line-height: 1.55;
++}
++
++.admin-panel-note {
++  margin: -4px 0 18px;
++}
++
++.admin-variant-list {
++  display: grid;
++  gap: 16px;
++}
++
++.admin-variant-card {
++  padding: 20px;
++  border: 1px solid var(--line);
++  border-radius: 20px;
++  background: color-mix(in srgb, var(--canvas) 58%, white);
++}
++
++.admin-variant-card__heading {
++  margin-bottom: 18px;
++  display: flex;
++  align-items: center;
++  gap: 14px;
++}
++
++.admin-variant-card__heading > strong {
++  margin-right: auto;
++  font-size: .9rem;
++}
++
++.admin-variant-card__heading > button {
++  width: 38px;
++  height: 38px;
++  display: grid;
++  place-items: center;
++  border: 1px solid var(--line);
++  border-radius: 12px;
++  color: var(--danger);
++  background: var(--paper);
++  cursor: pointer;
++}
++
++.product-variant-picker {
++  margin: 22px 0;
++  padding: 18px;
++  border: 1px solid var(--line);
++  border-radius: 18px;
++  background: color-mix(in srgb, var(--canvas) 62%, white);
++}
++
++.product-variant-picker__heading {
++  margin-bottom: 12px;
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 16px;
++}
++
++.product-variant-picker__heading strong {
++  font-size: .82rem;
++}
++
++.product-variant-picker__heading span {
++  color: var(--muted);
++  font-size: .75rem;
++}
++
++.product-variant-picker__options {
++  display: grid;
++  grid-template-columns: repeat(2, minmax(0, 1fr));
++  gap: 10px;
++}
++
++.product-variant-picker__options button {
++  padding: 13px 14px;
++  display: grid;
++  gap: 4px;
++  border: 1px solid var(--line);
++  border-radius: 14px;
++  color: var(--ink);
++  background: var(--paper);
++  text-align: left;
++  cursor: pointer;
++}
++
++.product-variant-picker__options button.active {
++  border-color: var(--forest);
++  box-shadow: 0 0 0 2px color-mix(in srgb, var(--forest) 15%, transparent);
++}
++
++.product-variant-picker__options button:disabled {
++  opacity: .48;
++  cursor: not-allowed;
++}
++
++.product-variant-picker__options strong {
++  font-size: .78rem;
++}
++
++.product-variant-picker__options span {
++  color: var(--muted);
++  font-size: .7rem;
++}
++
++@media (max-width: 720px) {
++  .product-variant-picker__options {
++    grid-template-columns: 1fr;
++  }
++
++  .admin-variant-card {
++    padding: 16px;
++  }
++}
+diff --git a/src/app/orders/[orderNumber]/order-client.tsx b/src/app/orders/[orderNumber]/order-client.tsx
+index 382af1c..714cf91 100644
+--- a/src/app/orders/[orderNumber]/order-client.tsx
++++ b/src/app/orders/[orderNumber]/order-client.tsx
+@@ -185,10 +185,10 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
+                 <span>Subtotal</span>
+               </div>
+               {order.items.map((line) => (
+-                <div className="invoice-row" key={line.product.id}>
++                <div className="invoice-row" key={`${line.product.id}-${line.variant?.id ?? "default"}`}>
+                   <span>
+-                    {line.product.shortName}
+-                    <small>{line.product.sku}</small>
++                    {line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}
++                    <small>{line.variant?.sku ?? line.product.sku}</small>
+                   </span>
+                   <span>{line.quantity}</span>
+                   <span>{formatCurrency(line.unitPrice)}</span>
+diff --git a/src/app/payment/[orderNumber]/payment-client.tsx b/src/app/payment/[orderNumber]/payment-client.tsx
+index 369d2e1..5add46c 100644
+--- a/src/app/payment/[orderNumber]/payment-client.tsx
++++ b/src/app/payment/[orderNumber]/payment-client.tsx
+@@ -117,7 +117,7 @@ export function PaymentClient({ orderNumber }: { orderNumber: string }) {
+         </div>
+         <aside className="order-mini-card">
+           <h2>Detail pesanan</h2>
+-          {order.items.map((line) => <article key={line.product.id}><img src={line.product.image} alt="" /><div><strong>{line.product.shortName}</strong><span>{line.quantity} barang</span></div><b>{formatCurrency(line.subtotal)}</b></article>)}
++          {order.items.map((line) => <article key={`${line.product.id}-${line.variant?.id ?? "default"}`}><img src={line.product.image} alt="" /><div><strong>{line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}</strong><span>{line.quantity} barang</span></div><b>{formatCurrency(line.subtotal)}</b></article>)}
+           <div><span>Pengiriman</span><strong>{order.shipping.courier} {order.shipping.service}</strong></div>
+           <div><span>Tujuan</span><strong>{order.customer.city}</strong></div>
+           <div><span>Nomor resi</span><strong>{order.trackingNumber}</strong></div>
+diff --git a/src/app/products/[slug]/product-detail-client.tsx b/src/app/products/[slug]/product-detail-client.tsx
+index d2b35c1..f32afc9 100644
+--- a/src/app/products/[slug]/product-detail-client.tsx
++++ b/src/app/products/[slug]/product-detail-client.tsx
+@@ -3,11 +3,12 @@
+ import Link from "next/link";
+ import { Check, ChevronRight, PackageCheck, ShieldCheck, ShoppingBag, Star, Truck } from "lucide-react";
+ import { useRouter } from "next/navigation";
+-import { useState } from "react";
++import { useMemo, useState } from "react";
+ import { QuantityStepper } from "@/components/ui/quantity-stepper";
+ import { ProductCard } from "@/components/store/product-card";
+ import { useCatalog } from "@/context/catalog-provider";
+ import { useStore } from "@/context/store-provider";
++import { getActiveVariants, getSellablePrice, getSellableStock } from "@/features/catalog/product-options";
+ import { formatCurrency, formatWeight } from "@/lib/formatters";
+ import type { Product } from "@/types/commerce";
+ 
+@@ -15,14 +16,30 @@ export function ProductDetailClient({ product }: { product: Product }) {
+   const { addToCart } = useStore();
+   const { products } = useCatalog();
+   const router = useRouter();
++  const variants = useMemo(() => getActiveVariants(product), [product]);
++  const [selectedVariantId, setSelectedVariantId] = useState(variants[0]?.id ?? "");
++  const selectedVariant = variants.find((variant) => variant.id === selectedVariantId);
++  const stock = getSellableStock(product, selectedVariant);
+   const [quantity, setQuantity] = useState(1);
+-  const [image, setImage] = useState(product.gallery[0]);
++  const [image, setImage] = useState(product.gallery[0] ?? product.image);
+   const [added, setAdded] = useState(false);
+-  const unitPrice = product.wholesalePrice && product.wholesaleMinimum && quantity >= product.wholesaleMinimum ? product.wholesalePrice : product.price;
++  const unitPrice = getSellablePrice(product, quantity, selectedVariant);
++  const compareAtPrice = selectedVariant?.compareAtPrice ?? product.compareAtPrice;
++  const wholesalePrice = selectedVariant?.wholesalePrice ?? product.wholesalePrice;
++  const wholesaleMinimum = selectedVariant?.wholesaleMinimum ?? product.wholesaleMinimum;
++  const sku = selectedVariant?.sku ?? product.sku;
++  const weight = selectedVariant?.weightGrams ?? product.weightGrams;
+   const related = products.filter((item) => item.category === product.category && item.id !== product.id).slice(0, 3);
+ 
++  function chooseVariant(variantId: string) {
++    const variant = variants.find((item) => item.id === variantId);
++    setSelectedVariantId(variantId);
++    setQuantity((current) => Math.min(Math.max(1, current), variant?.stock ?? 1));
++  }
++
+   function add(goToCart = false) {
+-    addToCart(product.id, quantity);
++    if (stock <= 0) return;
++    addToCart(product.id, quantity, selectedVariant?.id);
+     setAdded(true);
+     if (goToCart) router.push("/cart");
+     else window.setTimeout(() => setAdded(false), 1400);
+@@ -39,19 +56,35 @@ export function ProductDetailClient({ product }: { product: Product }) {
+         <div className="product-info">
+           <span className="eyebrow">{product.categoryLabel}</span>
+           <h1>{product.name}</h1>
+-          <div className="product-meta"><span><Star size={16} fill="currentColor" /> {product.rating}</span><span>{product.sold.toLocaleString("id-ID")} terjual</span><span>SKU {product.sku}</span></div>
++          <div className="product-meta"><span><Star size={16} fill="currentColor" /> {product.rating}</span><span>{product.sold.toLocaleString("id-ID")} terjual</span><span>SKU {sku}</span></div>
+           <p className="product-description">{product.description}</p>
+-          <div className="detail-price"><strong>{formatCurrency(unitPrice)}</strong>{product.compareAtPrice && <del>{formatCurrency(product.compareAtPrice)}</del>}</div>
+-          {product.wholesalePrice && product.wholesaleMinimum && <div className="wholesale-box"><strong>Harga grosir aktif otomatis</strong><p>Beli minimal {product.wholesaleMinimum} pcs untuk harga {formatCurrency(product.wholesalePrice)} / pcs.</p></div>}
+-          <div className="stock-line"><span><Check size={16} /> Stok tersedia</span><strong>{product.stock} pcs</strong></div>
+-          <div className="purchase-row"><QuantityStepper value={quantity} max={product.stock} onChange={setQuantity} /><button className="button button--primary grow" onClick={() => add(false)}><ShoppingBag size={18} /> Tambah keranjang</button></div>
+-          <button className="button button--secondary full-width" onClick={() => add(true)}>Beli sekarang · {formatCurrency(unitPrice * quantity)}</button>
++
++          {variants.length > 0 && (
++            <div className="product-variant-picker">
++              <div className="product-variant-picker__heading"><strong>Pilih varian</strong><span>{selectedVariant?.name}</span></div>
++              <div className="product-variant-picker__options">
++                {variants.map((variant) => (
++                  <button type="button" key={variant.id} className={variant.id === selectedVariantId ? "active" : ""} onClick={() => chooseVariant(variant.id)} disabled={variant.stock <= 0}>
++                    <strong>{variant.name}</strong>
++                    <span>{formatCurrency(variant.price)} · stok {variant.stock}</span>
++                  </button>
++                ))}
++              </div>
++            </div>
++          )}
++
++          <div className="detail-price"><strong>{formatCurrency(unitPrice)}</strong>{compareAtPrice && <del>{formatCurrency(compareAtPrice)}</del>}</div>
++          {wholesalePrice && wholesaleMinimum && <div className="wholesale-box"><strong>Harga grosir aktif otomatis</strong><p>Beli minimal {wholesaleMinimum} pcs untuk harga {formatCurrency(wholesalePrice)} / pcs.</p></div>}
++          <div className="stock-line"><span><Check size={16} /> {stock > 0 ? "Stok tersedia" : "Stok habis"}</span><strong>{stock} pcs</strong></div>
++          <div className="purchase-row"><QuantityStepper value={quantity} max={Math.max(1, stock)} onChange={setQuantity} /><button className="button button--primary grow" onClick={() => add(false)} disabled={stock <= 0}><ShoppingBag size={18} /> Tambah keranjang</button></div>
++          <button className="button button--secondary full-width" onClick={() => add(true)} disabled={stock <= 0}>Beli sekarang · {formatCurrency(unitPrice * quantity)}</button>
+           {added && <div className="success-inline"><Check size={17} /> Produk berhasil ditambahkan.</div>}
+-          <div className="service-points"><div><Truck size={20} /><span><strong>Pengiriman fleksibel</strong>JNE, J&T, SiCepat, atau ambil di toko.</span></div><div><ShieldCheck size={20} /><span><strong>Pembayaran aman</strong>Simulasi transfer, QRIS, dan COD.</span></div><div><PackageCheck size={20} /><span><strong>Packaging terkontrol</strong>Pemeriksaan barang sebelum dikirim.</span></div></div>
++          <div className="service-points"><div><Truck size={20} /><span><strong>Pengiriman fleksibel</strong>JNE, J&T, SiCepat, atau ambil di toko.</span></div><div><ShieldCheck size={20} /><span><strong>Pembayaran aman</strong>Transfer, QRIS, dan COD.</span></div><div><PackageCheck size={20} /><span><strong>Resi dan tracking</strong>Label pengiriman tersedia setelah pesanan dibuat.</span></div></div>
+         </div>
+       </section>
+-      <section className="section section--soft"><div className="shell product-specs"><div><span className="eyebrow">Detail produk</span><h2>Spesifikasi dan informasi</h2><p>Berat pengiriman: {formatWeight(product.weightGrams)}. Periksa spesifikasi sebelum memilih jumlah dan layanan pengiriman.</p></div><dl>{product.specs.map((spec) => <div key={spec.label}><dt>{spec.label}</dt><dd>{spec.value}</dd></div>)}</dl></div></section>
+-      {related.length > 0 && <section className="section shell"><div className="section-heading"><div><span className="eyebrow">Produk terkait</span><h2>Masih dalam kategori {product.categoryLabel}</h2></div></div><div className="product-grid product-grid--three">{related.map((item) => <ProductCard key={item.id} product={item} />)}</div></section>}
++
++      <section className="section section--soft"><div className="shell product-specs"><div><span className="eyebrow">Spesifikasi</span><h2>Informasi produk</h2><p>Berat pengiriman varian terpilih: {formatWeight(weight)}.</p></div><dl>{product.specs.map((spec) => <div key={`${spec.label}-${spec.value}`}><dt>{spec.label}</dt><dd>{spec.value}</dd></div>)}</dl></div></section>
++      {related.length > 0 && <section className="section shell"><div className="section-heading"><div><span className="eyebrow">Produk terkait</span><h2>Lengkapi kebutuhan Anda</h2></div><Link href={`/catalog?category=${product.category}`}>Lihat kategori <ChevronRight size={16} /></Link></div><div className="product-grid product-grid--catalog">{related.map((item) => <ProductCard key={item.id} product={item} />)}</div></section>}
+     </>
+   );
+ }
+diff --git a/src/components/admin/product-form.tsx b/src/components/admin/product-form.tsx
+index 8e5a55a..4d04e2d 100644
+--- a/src/components/admin/product-form.tsx
++++ b/src/components/admin/product-form.tsx
+@@ -3,12 +3,29 @@
+ import { ImagePlus, LoaderCircle, Plus, Save, Trash2 } from "lucide-react";
+ import { useRouter } from "next/navigation";
+ import { FormEvent, useEffect, useMemo, useState } from "react";
++import { makeProductSkuPreview, makeVariantId, makeVariantSkuPreview } from "@/features/catalog/product-options";
+ import { uploadAdminImage } from "@/lib/cloudinary/client-upload";
+ import { ApiClientError, apiFetch } from "@/lib/api/client";
+-import type { Category, Product, ProductStatus } from "@/types/commerce";
++import type { Category, Product, ProductStatus, ProductVariant } from "@/types/commerce";
+ 
+ type ProductFormProps = { initialProduct?: Product };
+ 
++type VariantDraft = {
++  id: string;
++  name: string;
++  sku: string;
++  price: string;
++  compareAtPrice: string;
++  wholesalePrice: string;
++  wholesaleMinimum: string;
++  stock: string;
++  minimumStock: string;
++  weightGrams: string;
++  isActive: boolean;
++  sold: string;
++  persisted: boolean;
++};
++
+ type ProductDraft = {
+   name: string;
+   shortName: string;
+@@ -33,13 +50,44 @@ type ProductDraft = {
+   isFeatured: boolean;
+   isNew: boolean;
+   specsText: string;
++  hasVariants: boolean;
++  variants: VariantDraft[];
+ };
+ 
+ function makeSlug(value: string) {
+   return value.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+ }
+ 
++function digitsOnly(value: string) {
++  return value.replace(/\D+/g, "");
++}
++
++function decimalOnly(value: string) {
++  const normalized = value.replace(/[^0-9.]+/g, "");
++  const [whole, ...fractions] = normalized.split(".");
++  return fractions.length ? `${whole}.${fractions.join("")}` : whole;
++}
++
++function toVariantDraft(variant: ProductVariant): VariantDraft {
++  return {
++    id: variant.id,
++    name: variant.name,
++    sku: variant.sku,
++    price: String(variant.price),
++    compareAtPrice: variant.compareAtPrice == null ? "" : String(variant.compareAtPrice),
++    wholesalePrice: variant.wholesalePrice == null ? "" : String(variant.wholesalePrice),
++    wholesaleMinimum: variant.wholesaleMinimum == null ? "" : String(variant.wholesaleMinimum),
++    stock: String(variant.stock),
++    minimumStock: String(variant.minimumStock ?? 0),
++    weightGrams: String(variant.weightGrams),
++    isActive: variant.isActive !== false,
++    sold: String(variant.sold ?? 0),
++    persisted: true,
++  };
++}
++
+ function toDraft(product?: Product): ProductDraft {
++  const variants = (product?.variants ?? []).map(toVariantDraft);
+   return {
+     name: product?.name ?? "",
+     shortName: product?.shortName ?? "",
+@@ -64,6 +112,26 @@ function toDraft(product?: Product): ProductDraft {
+     isFeatured: Boolean(product?.isFeatured),
+     isNew: Boolean(product?.isNew),
+     specsText: product?.specs.map((spec) => `${spec.label}: ${spec.value}`).join("\n") ?? "",
++    hasVariants: variants.length > 0,
++    variants,
++  };
++}
++
++function emptyVariant(index: number): VariantDraft {
++  return {
++    id: `varian-${index}`,
++    name: "",
++    sku: "",
++    price: "",
++    compareAtPrice: "",
++    wholesalePrice: "",
++    wholesaleMinimum: "",
++    stock: "0",
++    minimumStock: "0",
++    weightGrams: "",
++    isActive: true,
++    sold: "0",
++    persisted: false,
+   };
+ }
+ 
+@@ -83,6 +151,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+   }, []);
+ 
+   const selectedCategory = useMemo(() => categories.find((item) => item.id === draft.category), [categories, draft.category]);
++  const skuPreview = draft.sku || makeProductSkuPreview(draft.category, draft.name);
+ 
+   function update<K extends keyof ProductDraft>(key: K, value: ProductDraft[K]) {
+     setDraft((current) => ({ ...current, [key]: value }));
+@@ -97,6 +166,50 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+     }));
+   }
+ 
++  function toggleVariants(enabled: boolean) {
++    if (!enabled && draft.variants.some((variant) => variant.persisted && Number(variant.stock) > 0)) {
++      window.alert("Masih ada stok pada varian. Kosongkan seluruh stok varian melalui menu Inventori sebelum mematikan percabangan.");
++      return;
++    }
++    if (!enabled && draft.variants.length > 0 && !window.confirm("Mematikan varian akan menghapus seluruh percabangan produk dari form. Lanjutkan?")) return;
++    setDraft((current) => ({
++      ...current,
++      hasVariants: enabled,
++      variants: enabled ? (current.variants.length ? current.variants : [emptyVariant(1)]) : [],
++    }));
++  }
++
++  function addVariant() {
++    setDraft((current) => ({ ...current, variants: [...current.variants, emptyVariant(current.variants.length + 1)] }));
++  }
++
++  function updateVariant<K extends keyof VariantDraft>(index: number, key: K, value: VariantDraft[K]) {
++    setDraft((current) => ({
++      ...current,
++      variants: current.variants.map((variant, variantIndex) => {
++        if (variantIndex !== index) return variant;
++        if (key === "name") {
++          const name = String(value);
++          return {
++            ...variant,
++            name,
++            id: variant.persisted ? variant.id : makeVariantId(name, index + 1),
++          };
++        }
++        return { ...variant, [key]: value };
++      }),
++    }));
++  }
++
++  function removeVariant(index: number) {
++    const variant = draft.variants[index];
++    if (variant?.persisted && Number(variant.stock) > 0) {
++      window.alert("Stok varian masih tersedia. Kosongkan melalui menu Inventori sebelum menghapus varian.");
++      return;
++    }
++    setDraft((current) => ({ ...current, variants: current.variants.filter((_, variantIndex) => variantIndex !== index) }));
++  }
++
+   async function uploadMain(file?: File) {
+     if (!file) return;
+     setUploading(true);
+@@ -149,11 +262,45 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+     event.preventDefault();
+     setSaving(true);
+     setError("");
++
+     const specs = draft.specsText.split("\n").map((line) => line.trim()).filter(Boolean).map((line) => {
+       const separator = line.indexOf(":");
+       return separator === -1 ? { label: "Informasi", value: line } : { label: line.slice(0, separator).trim(), value: line.slice(separator + 1).trim() };
+     }).filter((spec) => spec.label && spec.value);
+ 
++    const activeVariants = draft.variants.filter((variant) => variant.isActive);
++    if (draft.hasVariants && !activeVariants.length) {
++      setError("Tambahkan minimal satu varian aktif.");
++      setSaving(false);
++      return;
++    }
++
++    const variants = draft.hasVariants ? draft.variants.map((variant, index) => ({
++      id: variant.id || makeVariantId(variant.name, index + 1),
++      name: variant.name,
++      sku: variant.persisted ? variant.sku : "",
++      price: variant.price,
++      compareAtPrice: variant.compareAtPrice,
++      wholesalePrice: variant.wholesalePrice,
++      wholesaleMinimum: variant.wholesaleMinimum,
++      stock: variant.stock,
++      minimumStock: variant.minimumStock,
++      weightGrams: variant.weightGrams,
++      isActive: variant.isActive,
++      sold: variant.sold,
++    })) : [];
++
++    const variantPrices = activeVariants.map((variant) => Number(variant.price || 0)).filter((value) => value > 0);
++    const variantStocks = activeVariants.reduce((total, variant) => total + Number(variant.stock || 0), 0);
++    const variantMinimumStocks = activeVariants.reduce((total, variant) => total + Number(variant.minimumStock || 0), 0);
++    const variantWeights = activeVariants.map((variant) => Number(variant.weightGrams || 0)).filter((value) => value > 0);
++
++    if (draft.hasVariants && (variantPrices.length !== activeVariants.length || variantWeights.length !== activeVariants.length)) {
++      setError("Harga jual dan berat wajib diisi pada setiap varian aktif.");
++      setSaving(false);
++      return;
++    }
++
+     const body = {
+       slug: draft.slug,
+       name: draft.name,
+@@ -161,14 +308,14 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+       category: draft.category,
+       categoryLabel: selectedCategory?.name ?? draft.category,
+       description: draft.description,
+-      price: draft.price,
+-      compareAtPrice: draft.compareAtPrice,
+-      wholesalePrice: draft.wholesalePrice,
+-      wholesaleMinimum: draft.wholesaleMinimum,
+-      stock: draft.stock,
+-      minimumStock: draft.minimumStock,
+-      sku: draft.sku,
+-      weightGrams: draft.weightGrams,
++      price: draft.hasVariants ? String(Math.min(...variantPrices)) : draft.price,
++      compareAtPrice: draft.hasVariants ? "" : draft.compareAtPrice,
++      wholesalePrice: draft.hasVariants ? "" : draft.wholesalePrice,
++      wholesaleMinimum: draft.hasVariants ? "" : draft.wholesaleMinimum,
++      stock: draft.hasVariants ? String(variantStocks) : draft.stock,
++      minimumStock: draft.hasVariants ? String(variantMinimumStocks) : draft.minimumStock,
++      sku: initialProduct ? draft.sku : "",
++      weightGrams: draft.hasVariants ? String(Math.min(...variantWeights)) : draft.weightGrams,
+       image: draft.image,
+       imagePublicId: draft.imagePublicId || undefined,
+       gallery: draft.gallery.length ? draft.gallery : [draft.image],
+@@ -179,6 +326,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+       isFeatured: draft.isFeatured,
+       isNew: draft.isNew,
+       specs,
++      variants,
+     };
+ 
+     try {
+@@ -204,7 +352,7 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+           <label>Nama singkat<input value={draft.shortName} onChange={(event) => update("shortName", event.target.value)} required /></label>
+           <label>Slug<input value={draft.slug} onChange={(event) => update("slug", makeSlug(event.target.value))} required /></label>
+           <label>Kategori<select value={draft.category} onChange={(event) => update("category", event.target.value)} required>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label>
+-          <label>SKU<input value={draft.sku} onChange={(event) => update("sku", event.target.value.toUpperCase())} required /></label>
++          <label>SKU otomatis<input value={skuPreview} readOnly aria-readonly="true" /><small>SKU dibuat otomatis dan dijaga tetap unik oleh server.</small></label>
+           <label>Status<select value={draft.status} onChange={(event) => update("status", event.target.value as ProductStatus)}><option value="active">Aktif</option><option value="draft">Draft</option><option value="archived">Arsip</option></select></label>
+           <label className="span-2">Deskripsi<textarea rows={6} value={draft.description} onChange={(event) => update("description", event.target.value)} required /></label>
+           <label className="admin-check"><input type="checkbox" checked={draft.isFeatured} onChange={(event) => update("isFeatured", event.target.checked)} /> Produk unggulan</label>
+@@ -213,20 +361,54 @@ export function ProductForm({ initialProduct }: ProductFormProps) {
+       </section>
+ 
+       <section className="admin-panel">
+-        <div className="admin-panel__heading"><div><span>HARGA DAN STOK</span><h2>Nilai jual dan inventori</h2></div></div>
+-        <div className="admin-form-grid admin-form-grid--four">
+-          <label>Harga jual<input type="number" min="1" value={draft.price} onChange={(event) => update("price", event.target.value)} required /></label>
+-          <label>Harga coret<input type="number" min="0" value={draft.compareAtPrice} onChange={(event) => update("compareAtPrice", event.target.value)} /></label>
+-          <label>Harga grosir<input type="number" min="0" value={draft.wholesalePrice} onChange={(event) => update("wholesalePrice", event.target.value)} /></label>
+-          <label>Minimum grosir<input type="number" min="1" value={draft.wholesaleMinimum} onChange={(event) => update("wholesaleMinimum", event.target.value)} /></label>
+-          <label>Stok<input type="number" min="0" value={draft.stock} onChange={(event) => update("stock", event.target.value)} required disabled={Boolean(initialProduct)} />{initialProduct && <small>Ubah melalui menu Stok agar tercatat di audit.</small>}</label>
+-          <label>Batas stok minimum<input type="number" min="0" value={draft.minimumStock} onChange={(event) => update("minimumStock", event.target.value)} required /></label>
+-          <label>Berat (gram)<input type="number" min="1" value={draft.weightGrams} onChange={(event) => update("weightGrams", event.target.value)} required /></label>
+-          <label>Terjual<input type="number" min="0" value={draft.sold} onChange={(event) => update("sold", event.target.value)} disabled={Boolean(initialProduct)} /></label>
+-          <label>Rating<input type="number" min="0" max="5" step="0.1" value={draft.rating} onChange={(event) => update("rating", event.target.value)} /></label>
+-        </div>
++        <div className="admin-panel__heading"><div><span>TIPE PRODUK</span><h2>Produk tunggal atau bercabang</h2></div></div>
++        <label className="admin-variant-toggle">
++          <input type="checkbox" checked={draft.hasVariants} onChange={(event) => toggleVariants(event.target.checked)} />
++          <span><strong>Produk memiliki varian</strong><small>Aktifkan untuk ukuran, kapasitas, warna, model, atau jenis lain. Matikan jika produk hanya memiliki satu pilihan.</small></span>
++        </label>
+       </section>
+ 
++      {!draft.hasVariants ? (
++        <section className="admin-panel">
++          <div className="admin-panel__heading"><div><span>HARGA DAN STOK</span><h2>Nilai jual dan inventori</h2></div></div>
++          <div className="admin-form-grid admin-form-grid--four">
++            <label>Harga jual<input type="text" inputMode="numeric" value={draft.price} onChange={(event) => update("price", digitsOnly(event.target.value))} required /></label>
++            <label>Harga coret<input type="text" inputMode="numeric" value={draft.compareAtPrice} onChange={(event) => update("compareAtPrice", digitsOnly(event.target.value))} /></label>
++            <label>Harga grosir<input type="text" inputMode="numeric" value={draft.wholesalePrice} onChange={(event) => update("wholesalePrice", digitsOnly(event.target.value))} /></label>
++            <label>Minimum grosir<input type="text" inputMode="numeric" value={draft.wholesaleMinimum} onChange={(event) => update("wholesaleMinimum", digitsOnly(event.target.value))} /></label>
++            <label>Stok<input type="text" inputMode="numeric" value={draft.stock} onChange={(event) => update("stock", digitsOnly(event.target.value))} required disabled={Boolean(initialProduct)} />{initialProduct && <small>Ubah melalui menu Stok agar tercatat di audit.</small>}</label>
++            <label>Batas stok minimum<input type="text" inputMode="numeric" value={draft.minimumStock} onChange={(event) => update("minimumStock", digitsOnly(event.target.value))} required /></label>
++            <label>Berat (gram)<input type="text" inputMode="numeric" value={draft.weightGrams} onChange={(event) => update("weightGrams", digitsOnly(event.target.value))} required /></label>
++            <label>Terjual<input type="text" inputMode="numeric" value={draft.sold} onChange={(event) => update("sold", digitsOnly(event.target.value))} disabled={Boolean(initialProduct)} /></label>
++            <label>Rating<input type="text" inputMode="decimal" value={draft.rating} onChange={(event) => update("rating", decimalOnly(event.target.value))} /></label>
++          </div>
++        </section>
++      ) : (
++        <section className="admin-panel">
++          <div className="admin-panel__heading"><div><span>VARIAN PRODUK</span><h2>Ukuran, model, atau jenis</h2></div><button type="button" className="button button--secondary" onClick={addVariant}><Plus size={16} /> Tambah varian</button></div>
++          <p className="admin-panel-note">Contoh: Filter Air → Ukuran A, Ukuran B, Ukuran C. Harga, stok, grosir, berat, dan SKU dikelola per varian.</p>
++          <div className="admin-variant-list">
++            {draft.variants.map((variant, index) => (
++              <article className="admin-variant-card" key={`${variant.id}-${index}`}>
++                <div className="admin-variant-card__heading"><strong>Varian {index + 1}</strong><label className="admin-check"><input type="checkbox" checked={variant.isActive} onChange={(event) => updateVariant(index, "isActive", event.target.checked)} /> Aktif</label><button type="button" onClick={() => removeVariant(index)} aria-label={`Hapus varian ${index + 1}`}><Trash2 size={16} /></button></div>
++                <div className="admin-form-grid admin-form-grid--four">
++                  <label className="span-2">Nama varian<input value={variant.name} onChange={(event) => updateVariant(index, "name", event.target.value)} placeholder="Contoh: Ukuran A / 30 cm / 800 L/H" required /></label>
++                  <label className="span-2">SKU otomatis<input value={variant.sku || makeVariantSkuPreview(skuPreview, variant.name, index + 1)} readOnly /></label>
++                  <label>Harga jual<input type="text" inputMode="numeric" value={variant.price} onChange={(event) => updateVariant(index, "price", digitsOnly(event.target.value))} required /></label>
++                  <label>Harga coret<input type="text" inputMode="numeric" value={variant.compareAtPrice} onChange={(event) => updateVariant(index, "compareAtPrice", digitsOnly(event.target.value))} /></label>
++                  <label>Harga grosir<input type="text" inputMode="numeric" value={variant.wholesalePrice} onChange={(event) => updateVariant(index, "wholesalePrice", digitsOnly(event.target.value))} /></label>
++                  <label>Minimum grosir<input type="text" inputMode="numeric" value={variant.wholesaleMinimum} onChange={(event) => updateVariant(index, "wholesaleMinimum", digitsOnly(event.target.value))} /></label>
++                  <label>Stok<input type="text" inputMode="numeric" value={variant.stock} onChange={(event) => updateVariant(index, "stock", digitsOnly(event.target.value))} required disabled={variant.persisted} />{variant.persisted && <small>Ubah dari menu Stok.</small>}</label>
++                  <label>Batas stok minimum<input type="text" inputMode="numeric" value={variant.minimumStock} onChange={(event) => updateVariant(index, "minimumStock", digitsOnly(event.target.value))} required /></label>
++                  <label>Berat (gram)<input type="text" inputMode="numeric" value={variant.weightGrams} onChange={(event) => updateVariant(index, "weightGrams", digitsOnly(event.target.value))} required /></label>
++                  <label>Terjual<input type="text" inputMode="numeric" value={variant.sold} readOnly /></label>
++                </div>
++              </article>
++            ))}
++          </div>
++        </section>
++      )}
++
+       <section className="admin-panel">
+         <div className="admin-panel__heading"><div><span>MEDIA CLOUDINARY</span><h2>Gambar utama dan galeri</h2></div></div>
+         <div className="admin-media-grid">
+diff --git a/src/components/store/product-card.tsx b/src/components/store/product-card.tsx
+index 4c12684..e122caf 100644
+--- a/src/components/store/product-card.tsx
++++ b/src/components/store/product-card.tsx
+@@ -2,16 +2,26 @@
+ 
+ import Link from "next/link";
+ import { ArrowUpRight, Check, Plus, Star } from "lucide-react";
++import { useRouter } from "next/navigation";
+ import { useState } from "react";
+ import { useStore } from "@/context/store-provider";
++import { getActiveVariants, getDisplayPrice, getDisplayStock } from "@/features/catalog/product-options";
+ import { formatCurrency } from "@/lib/formatters";
+ import type { Product } from "@/types/commerce";
+ 
+ export function ProductCard({ product }: { product: Product }) {
+   const { addToCart } = useStore();
++  const router = useRouter();
+   const [added, setAdded] = useState(false);
++  const variants = getActiveVariants(product);
++  const displayPrice = getDisplayPrice(product);
++  const displayStock = getDisplayStock(product);
+ 
+   function handleAdd() {
++    if (variants.length) {
++      router.push(`/products/${product.slug}`);
++      return;
++    }
+     addToCart(product.id);
+     setAdded(true);
+     window.setTimeout(() => setAdded(false), 1200);
+@@ -24,6 +34,7 @@ export function ProductCard({ product }: { product: Product }) {
+         <div className="product-card__badges">
+           {product.isNew && <span>NEW</span>}
+           {product.compareAtPrice && <span>SALE</span>}
++          {variants.length > 0 && <span>{variants.length} VARIAN</span>}
+         </div>
+         <span className="product-card__open"><ArrowUpRight size={17} /></span>
+       </Link>
+@@ -31,10 +42,10 @@ export function ProductCard({ product }: { product: Product }) {
+         <div className="product-card__meta"><span>{product.categoryLabel}</span><span><Star size={13} fill="currentColor" /> {product.rating}</span></div>
+         <Link href={`/products/${product.slug}`} className="product-card__title">{product.shortName}</Link>
+         <div className="product-card__price-row">
+-          <div><strong>{formatCurrency(product.price)}</strong>{product.compareAtPrice && <del>{formatCurrency(product.compareAtPrice)}</del>}</div>
+-          <button type="button" onClick={handleAdd} aria-label="Tambah ke keranjang">{added ? <Check size={18} /> : <Plus size={18} />}</button>
++          <div><strong>{variants.length ? `Mulai ${formatCurrency(displayPrice)}` : formatCurrency(displayPrice)}</strong>{product.compareAtPrice && <del>{formatCurrency(product.compareAtPrice)}</del>}</div>
++          <button type="button" onClick={handleAdd} aria-label={variants.length ? "Pilih varian" : "Tambah ke keranjang"} disabled={displayStock <= 0}>{added ? <Check size={18} /> : variants.length ? <ArrowUpRight size={18} /> : <Plus size={18} />}</button>
+         </div>
+-        <div className="product-card__foot"><span>{product.sold.toLocaleString("id-ID")} terjual</span><span>Stok {product.stock}</span></div>
++        <div className="product-card__foot"><span>{product.sold.toLocaleString("id-ID")} terjual</span><span>Stok {displayStock}</span></div>
+       </div>
+     </article>
+   );
+diff --git a/src/context/store-provider.tsx b/src/context/store-provider.tsx
+index 99163c6..352e45b 100644
+--- a/src/context/store-provider.tsx
++++ b/src/context/store-provider.tsx
+@@ -1,20 +1,27 @@
+ "use client";
+ 
+ import { createContext, useContext, useEffect, useMemo, useState } from "react";
++import { getActiveVariants, getSellablePrice, getSellableStock, getVariant } from "@/features/catalog/product-options";
+ import { useCatalog } from "@/context/catalog-provider";
+ import type { CartDisplayLine, CartLine } from "@/types/commerce";
+ 
+ const CART_KEY = "berkah-oyot:cart";
+ 
++function sameLine(line: CartLine, productId: string, variantId?: string) {
++  if (line.productId !== productId) return false;
++  if (!line.variantId && variantId) return true; // kompatibilitas keranjang lama sebelum fitur varian
++  return (line.variantId ?? "") === (variantId ?? "");
++}
++
+ type StoreContextValue = {
+   cart: CartLine[];
+   displayLines: CartDisplayLine[];
+   itemCount: number;
+   subtotal: number;
+   hydrated: boolean;
+-  addToCart: (productId: string, quantity?: number) => void;
+-  updateQuantity: (productId: string, quantity: number) => void;
+-  removeFromCart: (productId: string) => void;
++  addToCart: (productId: string, quantity?: number, variantId?: string) => void;
++  updateQuantity: (productId: string, quantity: number, variantId?: string) => void;
++  removeFromCart: (productId: string, variantId?: string) => void;
+   clearCart: () => void;
+ };
+ 
+@@ -47,8 +54,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
+   const displayLines = useMemo<CartDisplayLine[]>(() => cart.flatMap((line) => {
+     const product = getProductById(line.productId);
+     if (!product || product.status !== "active") return [];
+-    const unitPrice = product.wholesalePrice && product.wholesaleMinimum && line.quantity >= product.wholesaleMinimum ? product.wholesalePrice : product.price;
+-    return [{ product, quantity: Math.min(line.quantity, product.stock), unitPrice, subtotal: unitPrice * Math.min(line.quantity, product.stock) }];
++    const variant = getVariant(product, line.variantId);
++    if (getActiveVariants(product).length && !variant) return [];
++    const stock = getSellableStock(product, variant);
++    if (stock <= 0) return [];
++    const quantity = Math.min(line.quantity, stock);
++    const unitPrice = getSellablePrice(product, quantity, variant);
++    return [{ product, variant, quantity, unitPrice, subtotal: unitPrice * quantity }];
+   }), [cart, getProductById]);
+ 
+   const value = useMemo<StoreContextValue>(() => ({
+@@ -57,22 +69,31 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
+     itemCount: cart.reduce((total, line) => total + line.quantity, 0),
+     subtotal: displayLines.reduce((total, line) => total + line.subtotal, 0),
+     hydrated,
+-    addToCart(productId, quantity = 1) {
++    addToCart(productId, quantity = 1, requestedVariantId) {
+       const product = getProductById(productId);
+-      if (!product || product.stock <= 0) return;
++      if (!product) return;
++      const variant = getVariant(product, requestedVariantId);
++      const variantId = variant?.id;
++      const stock = getSellableStock(product, variant);
++      if (stock <= 0) return;
+       setCart((current) => {
+-        const existing = current.find((line) => line.productId === productId);
+-        if (!existing) return [...current, { productId, quantity: Math.min(quantity, product.stock) }];
+-        return current.map((line) => line.productId === productId ? { ...line, quantity: Math.min(product.stock, Math.max(1, line.quantity + quantity)) } : line);
++        const existing = current.find((line) => sameLine(line, productId, variantId));
++        if (!existing) return [...current, { productId, variantId, quantity: Math.min(quantity, stock) }];
++        return current.map((line) => sameLine(line, productId, variantId) ? { ...line, quantity: Math.min(stock, Math.max(1, line.quantity + quantity)) } : line);
+       });
+     },
+-    updateQuantity(productId, quantity) {
+-      if (quantity <= 0) return setCart((current) => current.filter((line) => line.productId !== productId));
++    updateQuantity(productId, quantity, variantId) {
++      if (quantity <= 0) {
++        setCart((current) => current.filter((line) => !sameLine(line, productId, variantId)));
++        return;
++      }
+       const product = getProductById(productId);
+-      setCart((current) => current.map((line) => line.productId === productId ? { ...line, quantity: Math.min(product?.stock ?? quantity, quantity) } : line));
++      const variant = product ? getVariant(product, variantId) : undefined;
++      const stock = product ? getSellableStock(product, variant) : quantity;
++      setCart((current) => current.map((line) => sameLine(line, productId, variantId) ? { ...line, quantity: Math.min(stock, quantity) } : line));
+     },
+-    removeFromCart(productId) {
+-      setCart((current) => current.filter((line) => line.productId !== productId));
++    removeFromCart(productId, variantId) {
++      setCart((current) => current.filter((line) => !sameLine(line, productId, variantId)));
+     },
+     clearCart() {
+       setCart([]);
+diff --git a/src/features/admin/admin-repository.ts b/src/features/admin/admin-repository.ts
+index a7f552d..b8e5fc5 100644
+--- a/src/features/admin/admin-repository.ts
++++ b/src/features/admin/admin-repository.ts
+@@ -49,7 +49,7 @@ export async function listCustomers(): Promise<CustomerAccount[]> {
+   }).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+ }
+ 
+-export async function adjustInventory(input: { productId: string; type: "adjustment-in" | "adjustment-out" | "return"; quantity: number; reason: string }, adminUid: string): Promise<InventoryMovement> {
++export async function adjustInventory(input: { productId: string; variantId?: string; type: "adjustment-in" | "adjustment-out" | "return"; quantity: number; reason: string }, adminUid: string): Promise<InventoryMovement> {
+   const db = getAdminDb();
+   const productRef = db.collection("products").doc(input.productId);
+   const movementRef = db.collection("inventoryMovements").doc();
+@@ -58,15 +58,42 @@ export async function adjustInventory(input: { productId: string; type: "adjustm
+     const productSnapshot = await transaction.get(productRef);
+     if (!productSnapshot.exists) throw new Error("NOT_FOUND");
+     const product = productSnapshot.data() ?? {};
+-    const stockBefore = Number(product.stock ?? 0);
++    const variants = Array.isArray(product.variants) ? [...product.variants] as Array<Record<string, unknown>> : [];
+     const delta = input.type === "adjustment-out" ? -input.quantity : input.quantity;
+-    const stockAfter = stockBefore + delta;
+-    if (stockAfter < 0) throw new Error("Stok tidak boleh menjadi negatif.");
+-    transaction.update(productRef, { stock: stockAfter, updatedAt: FieldValue.serverTimestamp() });
++
++    let stockBefore = Number(product.stock ?? 0);
++    let stockAfter = stockBefore + delta;
++    let sku = String(product.sku ?? "");
++    let variantName: string | undefined;
++
++    if (variants.length) {
++      if (!input.variantId) throw new Error("Pilih varian produk yang akan disesuaikan.");
++      const variantIndex = variants.findIndex((variant) => String(variant.id ?? "") === input.variantId);
++      if (variantIndex === -1) throw new Error("Varian produk tidak ditemukan.");
++      const variant = variants[variantIndex];
++      stockBefore = Number(variant.stock ?? 0);
++      stockAfter = stockBefore + delta;
++      if (stockAfter < 0) throw new Error("Stok varian tidak boleh menjadi negatif.");
++      sku = String(variant.sku ?? product.sku ?? "");
++      variantName = String(variant.name ?? "");
++      variants[variantIndex] = { ...variant, stock: stockAfter };
++      const activeVariants = variants.filter((item) => item.isActive !== false);
++      transaction.update(productRef, {
++        variants,
++        stock: activeVariants.reduce((total, item) => total + Number(item.stock ?? 0), 0),
++        updatedAt: FieldValue.serverTimestamp(),
++      });
++    } else {
++      if (stockAfter < 0) throw new Error("Stok tidak boleh menjadi negatif.");
++      transaction.update(productRef, { stock: stockAfter, updatedAt: FieldValue.serverTimestamp() });
++    }
++
+     transaction.set(movementRef, {
+       productId: productRef.id,
+       productName: String(product.name ?? ""),
+-      sku: String(product.sku ?? ""),
++      sku,
++      variantId: input.variantId ?? null,
++      variantName: variantName ?? null,
+       type: input.type,
+       quantity: delta,
+       stockBefore,
+@@ -84,6 +111,8 @@ export async function adjustInventory(input: { productId: string; type: "adjustm
+     productId: String(data.productId ?? ""),
+     productName: String(data.productName ?? ""),
+     sku: String(data.sku ?? ""),
++    variantId: data.variantId ? String(data.variantId) : undefined,
++    variantName: data.variantName ? String(data.variantName) : undefined,
+     type: data.type,
+     quantity: Number(data.quantity ?? 0),
+     stockBefore: Number(data.stockBefore ?? 0),
+@@ -104,6 +133,8 @@ export async function listInventoryMovements(limit = 100): Promise<InventoryMove
+       productId: String(data.productId ?? ""),
+       productName: String(data.productName ?? ""),
+       sku: String(data.sku ?? ""),
++      variantId: data.variantId ? String(data.variantId) : undefined,
++      variantName: data.variantName ? String(data.variantName) : undefined,
+       type: data.type,
+       quantity: Number(data.quantity ?? 0),
+       stockBefore: Number(data.stockBefore ?? 0),
+diff --git a/src/features/catalog/product-options.ts b/src/features/catalog/product-options.ts
+new file mode 100644
+index 0000000..0b35977
+--- /dev/null
++++ b/src/features/catalog/product-options.ts
+@@ -0,0 +1,61 @@
++import type { Product, ProductVariant } from "@/types/commerce";
++
++function normalizeToken(value: string, fallback: string, maxLength = 24) {
++  const normalized = value
++    .normalize("NFKD")
++    .replace(/[\u0300-\u036f]/g, "")
++    .toUpperCase()
++    .replace(/[^A-Z0-9]+/g, "-")
++    .replace(/^-|-$/g, "")
++    .slice(0, maxLength);
++  return normalized || fallback;
++}
++
++export function makeProductSkuPreview(category: string, name: string) {
++  const categoryCode = normalizeToken(category, "PRD").replace(/-/g, "").slice(0, 3).padEnd(3, "X");
++  const nameCode = normalizeToken(name, "PRODUK").split("-").filter(Boolean).slice(0, 3).join("-").slice(0, 22);
++  return `${categoryCode}-${nameCode || "PRODUK"}`;
++}
++
++export function makeVariantId(name: string, fallbackIndex = 1) {
++  return normalizeToken(name, `VARIAN-${fallbackIndex}`).toLowerCase();
++}
++
++export function makeVariantSkuPreview(productSku: string, variantName: string, fallbackIndex = 1) {
++  const base = normalizeToken(productSku, "PRD-PRODUK", 52);
++  const variant = normalizeToken(variantName, `VAR-${fallbackIndex}`).replace(/-/g, "").slice(0, 12);
++  return `${base}-${variant}`;
++}
++
++export function getActiveVariants(product: Product) {
++  return (product.variants ?? []).filter((variant) => variant.isActive !== false);
++}
++
++export function getVariant(product: Product, variantId?: string) {
++  const variants = getActiveVariants(product);
++  if (!variants.length) return undefined;
++  return variants.find((variant) => variant.id === variantId) ?? variants[0];
++}
++
++export function getSellableStock(product: Product, variant?: ProductVariant) {
++  return variant ? variant.stock : product.stock;
++}
++
++export function getSellablePrice(product: Product, quantity: number, variant?: ProductVariant) {
++  const price = variant?.price ?? product.price;
++  const wholesalePrice = variant?.wholesalePrice ?? product.wholesalePrice;
++  const wholesaleMinimum = variant?.wholesaleMinimum ?? product.wholesaleMinimum;
++  return wholesalePrice != null && wholesaleMinimum != null && quantity >= wholesaleMinimum ? wholesalePrice : price;
++}
++
++export function getDisplayPrice(product: Product) {
++  const variants = getActiveVariants(product);
++  if (!variants.length) return product.price;
++  return Math.min(...variants.map((variant) => variant.price));
++}
++
++export function getDisplayStock(product: Product) {
++  const variants = getActiveVariants(product);
++  if (!variants.length) return product.stock;
++  return variants.reduce((total, variant) => total + variant.stock, 0);
++}
+diff --git a/src/features/catalog/product-repository.ts b/src/features/catalog/product-repository.ts
+index 6dc2a28..a7b9457 100644
+--- a/src/features/catalog/product-repository.ts
++++ b/src/features/catalog/product-repository.ts
+@@ -1,12 +1,30 @@
+ import "server-only";
+ 
+ import { FieldValue } from "firebase-admin/firestore";
++import { makeProductSkuPreview, makeVariantId, makeVariantSkuPreview } from "@/features/catalog/product-options";
+ import { getAdminDb } from "@/lib/firebase/admin";
+ import { stripUndefined, toIso } from "@/lib/firebase/firestore";
+-import type { Product } from "@/types/commerce";
++import type { Product, ProductVariant } from "@/types/commerce";
+ 
+ const COLLECTION = "products";
+ 
++function mapVariant(data: Record<string, unknown>, index: number): ProductVariant {
++  return {
++    id: String(data.id ?? makeVariantId(String(data.name ?? ""), index + 1)),
++    name: String(data.name ?? `Varian ${index + 1}`),
++    sku: String(data.sku ?? ""),
++    price: Number(data.price ?? 0),
++    compareAtPrice: data.compareAtPrice == null ? undefined : Number(data.compareAtPrice),
++    wholesalePrice: data.wholesalePrice == null ? undefined : Number(data.wholesalePrice),
++    wholesaleMinimum: data.wholesaleMinimum == null ? undefined : Number(data.wholesaleMinimum),
++    stock: Number(data.stock ?? 0),
++    minimumStock: Number(data.minimumStock ?? 0),
++    weightGrams: Number(data.weightGrams ?? 0),
++    isActive: data.isActive !== false,
++    sold: Number(data.sold ?? 0),
++  };
++}
++
+ function mapProduct(id: string, data: FirebaseFirestore.DocumentData): Product {
+   return {
+     id,
+@@ -34,11 +52,69 @@ function mapProduct(id: string, data: FirebaseFirestore.DocumentData): Product {
+     isNew: Boolean(data.isNew),
+     status: data.status === "draft" || data.status === "archived" ? data.status : "active",
+     specs: Array.isArray(data.specs) ? data.specs.map((spec: { label?: unknown; value?: unknown }) => ({ label: String(spec.label ?? ""), value: String(spec.value ?? "") })) : [],
++    variants: Array.isArray(data.variants) ? data.variants.map((variant: Record<string, unknown>, index: number) => mapVariant(variant, index)) : [],
+     createdAt: toIso(data.createdAt),
+     updatedAt: toIso(data.updatedAt),
+   };
+ }
+ 
++async function ensureUniqueSku(candidate: string, ignoredId?: string) {
++  const base = candidate.trim().toUpperCase().replace(/[^A-Z0-9-]+/g, "-").replace(/^-|-$/g, "").slice(0, 52) || "PRD-PRODUK";
++  for (let counter = 1; counter <= 999; counter += 1) {
++    const sku = counter === 1 ? base : `${base}-${counter}`;
++    const snapshot = await getAdminDb().collection(COLLECTION).where("sku", "==", sku).limit(2).get();
++    if (!snapshot.docs.some((doc) => doc.id !== ignoredId)) return sku;
++  }
++  throw new Error("SKU otomatis tidak dapat dibuat. Coba ubah nama produk.");
++}
++
++function normalizeVariants(variants: ProductVariant[], productSku: string, existing: ProductVariant[] = []) {
++  const existingMap = new Map(existing.map((variant) => [variant.id, variant]));
++  const usedIds = new Set<string>();
++  const usedSkus = new Set<string>();
++
++  return variants.map((variant, index) => {
++    let id = variant.id || makeVariantId(variant.name, index + 1);
++    if (usedIds.has(id)) id = `${id}-${index + 1}`;
++    usedIds.add(id);
++
++    const previous = existingMap.get(variant.id);
++    let sku = variant.sku?.trim() || previous?.sku || makeVariantSkuPreview(productSku, variant.name, index + 1);
++    let suffix = 2;
++    const baseSku = sku;
++    while (usedSkus.has(sku)) {
++      sku = `${baseSku}-${suffix}`;
++      suffix += 1;
++    }
++    usedSkus.add(sku);
++
++    return {
++      ...variant,
++      id,
++      sku,
++      stock: previous ? previous.stock : variant.stock,
++      sold: previous?.sold ?? variant.sold ?? 0,
++      isActive: variant.isActive !== false,
++    };
++  });
++}
++
++function aggregateVariantProduct(variants: ProductVariant[]) {
++  const active = variants.filter((variant) => variant.isActive !== false);
++  if (!active.length) throw new Error("Produk bercabang harus memiliki minimal satu varian aktif.");
++  const comparePrices = active.flatMap((variant) => variant.compareAtPrice == null ? [] : [variant.compareAtPrice]);
++  return {
++    price: Math.min(...active.map((variant) => variant.price)),
++    compareAtPrice: comparePrices.length ? Math.min(...comparePrices) : undefined,
++    wholesalePrice: undefined,
++    wholesaleMinimum: undefined,
++    stock: active.reduce((total, variant) => total + variant.stock, 0),
++    minimumStock: active.reduce((total, variant) => total + (variant.minimumStock ?? 0), 0),
++    weightGrams: Math.min(...active.map((variant) => variant.weightGrams)),
++    sold: active.reduce((total, variant) => total + (variant.sold ?? 0), 0),
++  };
++}
++
+ export async function listProducts(options?: { publicOnly?: boolean }): Promise<Product[]> {
+   let query: FirebaseFirestore.Query = getAdminDb().collection(COLLECTION);
+   if (options?.publicOnly) query = query.where("status", "==", "active");
+@@ -61,21 +137,55 @@ export async function createProduct(input: Omit<Product, "id" | "createdAt" | "u
+   const db = getAdminDb();
+   const duplicate = await db.collection(COLLECTION).where("slug", "==", input.slug).limit(1).get();
+   if (!duplicate.empty) throw new Error("Slug produk sudah digunakan.");
++
++  const sku = await ensureUniqueSku(input.sku || makeProductSkuPreview(input.category, input.name));
++  const variants = normalizeVariants(input.variants ?? [], sku);
++  const variantAggregate = variants.length ? aggregateVariantProduct(variants) : {};
+   const ref = db.collection(COLLECTION).doc();
+-  await ref.set(stripUndefined({ ...input, createdAt: FieldValue.serverTimestamp(), updatedAt: FieldValue.serverTimestamp() }));
++
++  await ref.set(stripUndefined({
++    ...input,
++    ...variantAggregate,
++    sku,
++    variants,
++    createdAt: FieldValue.serverTimestamp(),
++    updatedAt: FieldValue.serverTimestamp(),
++  }));
+   const created = await ref.get();
+   return mapProduct(created.id, created.data() ?? {});
+ }
+ 
+ export async function updateProduct(id: string, input: Partial<Omit<Product, "id" | "createdAt" | "updatedAt">>): Promise<Product> {
+   const ref = getAdminDb().collection(COLLECTION).doc(id);
+-  const existing = await ref.get();
+-  if (!existing.exists) throw new Error("NOT_FOUND");
++  const existingSnapshot = await ref.get();
++  if (!existingSnapshot.exists) throw new Error("NOT_FOUND");
++  const existing = mapProduct(existingSnapshot.id, existingSnapshot.data() ?? {});
++
+   if (input.slug) {
+     const duplicate = await getAdminDb().collection(COLLECTION).where("slug", "==", input.slug).limit(2).get();
+     if (duplicate.docs.some((doc) => doc.id !== id)) throw new Error("Slug produk sudah digunakan.");
+   }
+-  await ref.update(stripUndefined({ ...input, updatedAt: FieldValue.serverTimestamp() }));
++
++  const sku = input.sku?.trim()
++    ? await ensureUniqueSku(input.sku, id)
++    : existing.sku || await ensureUniqueSku(makeProductSkuPreview(input.category ?? existing.category, input.name ?? existing.name), id);
++
++  if (input.variants !== undefined) {
++    const incomingIds = new Set(input.variants.map((variant) => variant.id));
++    const removedWithStock = (existing.variants ?? []).find((variant) => !incomingIds.has(variant.id) && variant.stock > 0);
++    if (removedWithStock) throw new Error(`Varian ${removedWithStock.name} masih memiliki stok. Kosongkan stok melalui menu Inventori sebelum menghapus varian.`);
++  }
++
++  const variants = input.variants === undefined ? undefined : normalizeVariants(input.variants, sku, existing.variants ?? []);
++  const variantAggregate = variants?.length ? aggregateVariantProduct(variants) : {};
++
++  await ref.update(stripUndefined({
++    ...input,
++    ...variantAggregate,
++    sku,
++    ...(variants === undefined ? {} : { variants }),
++    updatedAt: FieldValue.serverTimestamp(),
++  }));
+   const updated = await ref.get();
+   return mapProduct(updated.id, updated.data() ?? {});
+ }
+diff --git a/src/features/catalog/schemas.ts b/src/features/catalog/schemas.ts
+index 54474c9..4c17a79 100644
+--- a/src/features/catalog/schemas.ts
++++ b/src/features/catalog/schemas.ts
+@@ -2,6 +2,21 @@ import { z } from "zod";
+ 
+ const optionalMoney = z.union([z.coerce.number().int().nonnegative(), z.literal("")]).optional().transform((value) => value === "" ? undefined : value);
+ 
++const productVariantSchema = z.object({
++  id: z.string().trim().min(1).max(80).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
++  name: z.string().trim().min(1).max(100),
++  sku: z.string().trim().max(80).default(""),
++  price: z.coerce.number().int().positive(),
++  compareAtPrice: optionalMoney,
++  wholesalePrice: optionalMoney,
++  wholesaleMinimum: z.union([z.coerce.number().int().positive(), z.literal("")]).optional().transform((value) => value === "" ? undefined : value),
++  stock: z.coerce.number().int().nonnegative(),
++  minimumStock: z.coerce.number().int().nonnegative().default(0),
++  weightGrams: z.coerce.number().int().positive(),
++  isActive: z.boolean().default(true),
++  sold: z.coerce.number().int().nonnegative().default(0),
++});
++
+ export const productSchema = z.object({
+   slug: z.string().trim().min(3).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug hanya boleh berisi huruf kecil, angka, dan tanda hubung."),
+   name: z.string().trim().min(3).max(180),
+@@ -15,7 +30,7 @@ export const productSchema = z.object({
+   wholesaleMinimum: z.union([z.coerce.number().int().positive(), z.literal("")]).optional().transform((value) => value === "" ? undefined : value),
+   stock: z.coerce.number().int().nonnegative(),
+   minimumStock: z.coerce.number().int().nonnegative().default(5),
+-  sku: z.string().trim().min(2).max(60),
++  sku: z.string().trim().max(60).default(""),
+   weightGrams: z.coerce.number().int().positive(),
+   image: z.string().trim().min(1).refine((value) => value.startsWith("/") || /^https?:\/\//.test(value), "URL gambar tidak valid."),
+   imagePublicId: z.string().trim().optional(),
+@@ -27,6 +42,7 @@ export const productSchema = z.object({
+   isNew: z.boolean().default(false),
+   status: z.enum(["draft", "active", "archived"]).default("active"),
+   specs: z.array(z.object({ label: z.string().trim().min(1).max(80), value: z.string().trim().min(1).max(160) })).max(20).default([]),
++  variants: z.array(productVariantSchema).max(50).default([]),
+ });
+ 
+ export const categorySchema = z.object({
+@@ -40,6 +56,7 @@ export const categorySchema = z.object({
+ 
+ export const inventoryAdjustmentSchema = z.object({
+   productId: z.string().min(1),
++  variantId: z.string().trim().min(1).max(80).optional(),
+   type: z.enum(["adjustment-in", "adjustment-out", "return"]),
+   quantity: z.coerce.number().int().positive(),
+   reason: z.string().trim().min(5).max(300),
+diff --git a/src/features/orders/order-repository.ts b/src/features/orders/order-repository.ts
+index 27aa33d..27cedb1 100644
+--- a/src/features/orders/order-repository.ts
++++ b/src/features/orders/order-repository.ts
+@@ -2,6 +2,7 @@ import "server-only";
+ 
+ import { FieldValue } from "firebase-admin/firestore";
+ import { getStoreSettings } from "@/features/admin/settings-repository";
++import { makeVariantId } from "@/features/catalog/product-options";
+ import { getAdminDb } from "@/lib/firebase/admin";
+ import { stripUndefined, toIso } from "@/lib/firebase/firestore";
+ import type {
+@@ -10,6 +11,8 @@ import type {
+   Order,
+   PaymentMethod,
+   PaymentStatus,
++  Product,
++  ProductVariant,
+   ShipmentStatus,
+   ShipmentTimelineItem,
+   ShippingService,
+@@ -33,6 +36,50 @@ function makeTimeline(paymentMethod: PaymentMethod): ShipmentTimelineItem[] {
+   ];
+ }
+ 
++function mapVariant(data: Record<string, unknown>, index: number): ProductVariant {
++  return {
++    id: String(data.id ?? makeVariantId(String(data.name ?? ""), index + 1)),
++    name: String(data.name ?? `Varian ${index + 1}`),
++    sku: String(data.sku ?? ""),
++    price: Number(data.price ?? 0),
++    compareAtPrice: data.compareAtPrice == null ? undefined : Number(data.compareAtPrice),
++    wholesalePrice: data.wholesalePrice == null ? undefined : Number(data.wholesalePrice),
++    wholesaleMinimum: data.wholesaleMinimum == null ? undefined : Number(data.wholesaleMinimum),
++    stock: Number(data.stock ?? 0),
++    minimumStock: Number(data.minimumStock ?? 0),
++    weightGrams: Number(data.weightGrams ?? 0),
++    isActive: data.isActive !== false,
++    sold: Number(data.sold ?? 0),
++  };
++}
++
++function snapshotProduct(id: string, data: FirebaseFirestore.DocumentData): Product {
++  return {
++    id,
++    slug: String(data.slug ?? ""),
++    name: String(data.name ?? ""),
++    shortName: String(data.shortName ?? data.name ?? ""),
++    category: String(data.category ?? ""),
++    categoryLabel: String(data.categoryLabel ?? ""),
++    description: String(data.description ?? ""),
++    price: Number(data.price ?? 0),
++    compareAtPrice: data.compareAtPrice == null ? undefined : Number(data.compareAtPrice),
++    wholesalePrice: data.wholesalePrice == null ? undefined : Number(data.wholesalePrice),
++    wholesaleMinimum: data.wholesaleMinimum == null ? undefined : Number(data.wholesaleMinimum),
++    stock: Number(data.stock ?? 0),
++    minimumStock: Number(data.minimumStock ?? 5),
++    sku: String(data.sku ?? ""),
++    weightGrams: Number(data.weightGrams ?? 0),
++    image: String(data.image ?? ""),
++    gallery: Array.isArray(data.gallery) ? data.gallery.map(String) : [],
++    rating: Number(data.rating ?? 0),
++    sold: Number(data.sold ?? 0),
++    specs: Array.isArray(data.specs) ? data.specs : [],
++    variants: Array.isArray(data.variants) ? data.variants.map((variant: Record<string, unknown>, index: number) => mapVariant(variant, index)) : [],
++    status: "active",
++  };
++}
++
+ function mapOrder(id: string, data: FirebaseFirestore.DocumentData): Order {
+   return {
+     id,
+@@ -70,7 +117,7 @@ function mapOrder(id: string, data: FirebaseFirestore.DocumentData): Order {
+ 
+ export async function createOrder(input: {
+   customerId: string;
+-  items: Array<{ productId: string; quantity: number }>;
++  items: Array<{ productId: string; variantId?: string; quantity: number }>;
+   shippingId: string;
+   paymentMethod: PaymentMethod;
+   voucherCode?: string;
+@@ -82,11 +129,13 @@ export async function createOrder(input: {
+   if (!shipping) throw new Error("Layanan pengiriman tidak tersedia.");
+   if (!settings.paymentMethods.includes(input.paymentMethod)) throw new Error("Metode pembayaran tidak tersedia.");
+ 
+-  const itemMap = new Map<string, number>();
++  const itemMap = new Map<string, { productId: string; variantId?: string; quantity: number }>();
+   for (const item of input.items) {
+-    itemMap.set(item.productId, (itemMap.get(item.productId) ?? 0) + item.quantity);
++    const key = `${item.productId}:${item.variantId ?? ""}`;
++    const current = itemMap.get(key);
++    itemMap.set(key, { productId: item.productId, variantId: item.variantId, quantity: (current?.quantity ?? 0) + item.quantity });
+   }
+-  const items = Array.from(itemMap, ([productId, quantity]) => ({ productId, quantity }));
++  const items = Array.from(itemMap.values());
+   if (items.some((item) => item.quantity > 999)) throw new Error("Jumlah salah satu produk melebihi batas transaksi.");
+ 
+   const customerSnapshot = await db.collection("customers").doc(input.customerId).get();
+@@ -105,62 +154,86 @@ export async function createOrder(input: {
+   };
+ 
+   const orderRef = db.collection("orders").doc();
+-  const movementRefs = items.map(() => db.collection("inventoryMovements").doc());
+   const orderNumber = makeCode("BO");
+   const trackingNumber = makeCode("RESI");
+ 
+   await db.runTransaction(async (transaction) => {
+-    const productRefs = items.map((item) => db.collection("products").doc(item.productId));
++    const grouped = new Map<string, typeof items>();
++    for (const item of items) grouped.set(item.productId, [...(grouped.get(item.productId) ?? []), item]);
++    const productIds = Array.from(grouped.keys());
++    const productRefs = productIds.map((productId) => db.collection("products").doc(productId));
+     const productSnapshots = await Promise.all(productRefs.map((ref) => transaction.get(ref)));
+     const displayLines: CartDisplayLine[] = [];
+ 
+-    productSnapshots.forEach((snapshot, index) => {
++    productSnapshots.forEach((snapshot, productIndex) => {
+       if (!snapshot.exists) throw new Error("Salah satu produk tidak ditemukan.");
+       const data = snapshot.data() ?? {};
+       if (data.status !== "active") throw new Error(`${String(data.name ?? "Produk")} sedang tidak tersedia.`);
+-      const requested = items[index].quantity;
+-      const stock = Number(data.stock ?? 0);
+-      if (stock < requested) throw new Error(`Stok ${String(data.name ?? "produk")} tidak mencukupi.`);
+-      const wholesaleMinimum = data.wholesaleMinimum == null ? undefined : Number(data.wholesaleMinimum);
+-      const unitPrice = data.wholesalePrice != null && wholesaleMinimum && requested >= wholesaleMinimum ? Number(data.wholesalePrice) : Number(data.price ?? 0);
+-      const product = {
+-        id: snapshot.id,
+-        slug: String(data.slug ?? ""),
+-        name: String(data.name ?? ""),
+-        shortName: String(data.shortName ?? data.name ?? ""),
+-        category: String(data.category ?? ""),
+-        categoryLabel: String(data.categoryLabel ?? ""),
+-        description: String(data.description ?? ""),
+-        price: Number(data.price ?? 0),
+-        compareAtPrice: data.compareAtPrice == null ? undefined : Number(data.compareAtPrice),
+-        wholesalePrice: data.wholesalePrice == null ? undefined : Number(data.wholesalePrice),
+-        wholesaleMinimum,
+-        stock,
+-        minimumStock: Number(data.minimumStock ?? 5),
+-        sku: String(data.sku ?? ""),
+-        weightGrams: Number(data.weightGrams ?? 0),
+-        image: String(data.image ?? ""),
+-        gallery: Array.isArray(data.gallery) ? data.gallery : [],
+-        rating: Number(data.rating ?? 0),
+-        sold: Number(data.sold ?? 0),
+-        specs: Array.isArray(data.specs) ? data.specs : [],
+-        status: "active" as const,
+-      };
+-      displayLines.push({ product, quantity: requested, unitPrice, subtotal: unitPrice * requested });
+-      transaction.update(productRefs[index], { stock: stock - requested, sold: Number(data.sold ?? 0) + requested, updatedAt: FieldValue.serverTimestamp() });
+-      transaction.set(movementRefs[index], {
+-        productId: snapshot.id,
+-        productName: product.name,
+-        sku: product.sku,
+-        type: "sale",
+-        quantity: -requested,
+-        stockBefore: stock,
+-        stockAfter: stock - requested,
+-        reason: `Reservasi stok untuk pesanan ${orderNumber}`,
+-        referenceId: orderRef.id,
+-        createdBy: input.customerId,
+-        createdAt: FieldValue.serverTimestamp(),
++
++      const product = snapshotProduct(snapshot.id, data);
++      const productItems = grouped.get(snapshot.id) ?? [];
++      const variants = [...(product.variants ?? [])];
++      const activeVariants = variants.filter((variant) => variant.isActive !== false);
++      let baseStock = product.stock;
++      let baseSold = product.sold;
++
++      productItems.forEach((item) => {
++        let variant: ProductVariant | undefined;
++        let stockBefore: number;
++        let sku = product.sku;
++
++        if (activeVariants.length) {
++          variant = activeVariants.find((entry) => entry.id === item.variantId) ?? (!item.variantId ? activeVariants[0] : undefined);
++          if (!variant) throw new Error(`Varian ${product.name} tidak ditemukan atau tidak aktif.`);
++          stockBefore = variant.stock;
++          sku = variant.sku;
++        } else {
++          stockBefore = baseStock;
++        }
++
++        if (stockBefore < item.quantity) throw new Error(`Stok ${product.name}${variant ? ` (${variant.name})` : ""} tidak mencukupi.`);
++        const wholesalePrice = variant?.wholesalePrice ?? product.wholesalePrice;
++        const wholesaleMinimum = variant?.wholesaleMinimum ?? product.wholesaleMinimum;
++        const normalPrice = variant?.price ?? product.price;
++        const unitPrice = wholesalePrice != null && wholesaleMinimum != null && item.quantity >= wholesaleMinimum ? wholesalePrice : normalPrice;
++        displayLines.push({ product, variant, quantity: item.quantity, unitPrice, subtotal: unitPrice * item.quantity });
++
++        if (variant) {
++          const variantIndex = variants.findIndex((entry) => entry.id === variant?.id);
++          variants[variantIndex] = { ...variants[variantIndex], stock: stockBefore - item.quantity, sold: (variant.sold ?? 0) + item.quantity };
++        } else {
++          baseStock -= item.quantity;
++          baseSold += item.quantity;
++        }
++
++        transaction.set(db.collection("inventoryMovements").doc(), stripUndefined({
++          productId: snapshot.id,
++          productName: product.name,
++          sku,
++          variantId: variant?.id,
++          variantName: variant?.name,
++          type: "sale",
++          quantity: -item.quantity,
++          stockBefore,
++          stockAfter: stockBefore - item.quantity,
++          reason: `Reservasi stok untuk pesanan ${orderNumber}`,
++          referenceId: orderRef.id,
++          createdBy: input.customerId,
++          createdAt: FieldValue.serverTimestamp(),
++        }));
+       });
++
++      if (activeVariants.length) {
++        const activeUpdated = variants.filter((variant) => variant.isActive !== false);
++        transaction.update(productRefs[productIndex], {
++          variants,
++          stock: activeUpdated.reduce((total, variant) => total + variant.stock, 0),
++          sold: activeUpdated.reduce((total, variant) => total + (variant.sold ?? 0), 0),
++          updatedAt: FieldValue.serverTimestamp(),
++        });
++      } else {
++        transaction.update(productRefs[productIndex], { stock: baseStock, sold: baseSold, updatedAt: FieldValue.serverTimestamp() });
++      }
+     });
+ 
+     const subtotal = displayLines.reduce((total, line) => total + line.subtotal, 0);
+@@ -249,9 +322,7 @@ export async function updateOrder(identifier: string, input: { paymentStatus?: P
+       const nextIndex = progression.indexOf(nextShipment);
+       let timeline = (Array.isArray(data.timeline) ? data.timeline : []).map((item: ShipmentTimelineItem) => {
+         const itemIndex = progression.indexOf(item.status);
+-        if (nextIndex >= 0 && itemIndex >= 0 && itemIndex <= nextIndex) {
+-          return { ...item, completed: true, timestamp: item.timestamp || now };
+-        }
++        if (nextIndex >= 0 && itemIndex >= 0 && itemIndex <= nextIndex) return { ...item, completed: true, timestamp: item.timestamp || now };
+         return item;
+       });
+       if (nextShipment === "cancelled" && !timeline.some((item: ShipmentTimelineItem) => item.status === "cancelled")) {
+@@ -262,29 +333,64 @@ export async function updateOrder(identifier: string, input: { paymentStatus?: P
+ 
+     if (nextShipment === "cancelled" && !data.stockRestored) {
+       const items = Array.isArray(data.items) ? data.items as CartDisplayLine[] : [];
+-      const productRefs = items.map((item) => db.collection("products").doc(item.product.id));
++      const grouped = new Map<string, CartDisplayLine[]>();
++      for (const item of items) grouped.set(item.product.id, [...(grouped.get(item.product.id) ?? []), item]);
++      const productIds = Array.from(grouped.keys());
++      const productRefs = productIds.map((productId) => db.collection("products").doc(productId));
+       const productSnapshots = await Promise.all(productRefs.map((productRef) => transaction.get(productRef)));
+ 
+-      productSnapshots.forEach((productSnapshot, index) => {
++      productSnapshots.forEach((productSnapshot, productIndex) => {
+         if (!productSnapshot.exists) return;
+-        const item = items[index];
+-        const productRef = productRefs[index];
+-        const stockBefore = Number(productSnapshot.data()?.stock ?? 0);
+-        const soldBefore = Number(productSnapshot.data()?.sold ?? 0);
+-        transaction.update(productRef, { stock: stockBefore + item.quantity, sold: Math.max(0, soldBefore - item.quantity), updatedAt: FieldValue.serverTimestamp() });
+-        transaction.set(db.collection("inventoryMovements").doc(), {
+-          productId: item.product.id,
+-          productName: item.product.name,
+-          sku: item.product.sku,
+-          type: "cancellation",
+-          quantity: item.quantity,
+-          stockBefore,
+-          stockAfter: stockBefore + item.quantity,
+-          reason: `Pengembalian stok karena pesanan ${current.orderNumber} dibatalkan`,
+-          referenceId: current.id,
+-          createdBy: adminUid,
+-          createdAt: FieldValue.serverTimestamp(),
++        const productData = productSnapshot.data() ?? {};
++        const product = snapshotProduct(productSnapshot.id, productData);
++        const productItems = grouped.get(productSnapshot.id) ?? [];
++        const variants = [...(product.variants ?? [])];
++        const hasVariants = variants.length > 0;
++        let baseStock = product.stock;
++        let baseSold = product.sold;
++
++        productItems.forEach((item) => {
++          const variantId = item.variant?.id;
++          const variantIndex = variantId ? variants.findIndex((variant) => variant.id === variantId) : -1;
++          const variant = variantIndex >= 0 ? variants[variantIndex] : undefined;
++          const stockBefore = variant?.stock ?? baseStock;
++          const soldBefore = variant?.sold ?? baseSold;
++
++          if (variant && variantIndex >= 0) {
++            variants[variantIndex] = { ...variant, stock: stockBefore + item.quantity, sold: Math.max(0, soldBefore - item.quantity) };
++          } else {
++            baseStock += item.quantity;
++            baseSold = Math.max(0, baseSold - item.quantity);
++          }
++
++          transaction.set(db.collection("inventoryMovements").doc(), stripUndefined({
++            productId: item.product.id,
++            productName: item.product.name,
++            sku: variant?.sku ?? item.product.sku,
++            variantId: variant?.id,
++            variantName: variant?.name,
++            type: "cancellation",
++            quantity: item.quantity,
++            stockBefore,
++            stockAfter: stockBefore + item.quantity,
++            reason: `Pengembalian stok karena pesanan ${current.orderNumber} dibatalkan`,
++            referenceId: current.id,
++            createdBy: adminUid,
++            createdAt: FieldValue.serverTimestamp(),
++          }));
+         });
++
++        if (hasVariants) {
++          const active = variants.filter((variant) => variant.isActive !== false);
++          transaction.update(productRefs[productIndex], {
++            variants,
++            stock: active.reduce((total, variant) => total + variant.stock, 0),
++            sold: active.reduce((total, variant) => total + (variant.sold ?? 0), 0),
++            updatedAt: FieldValue.serverTimestamp(),
++          });
++        } else {
++          transaction.update(productRefs[productIndex], { stock: baseStock, sold: baseSold, updatedAt: FieldValue.serverTimestamp() });
++        }
+       });
+       updates.stockRestored = true;
+     }
+diff --git a/src/features/orders/schemas.ts b/src/features/orders/schemas.ts
+index c33b622..b9400a5 100644
+--- a/src/features/orders/schemas.ts
++++ b/src/features/orders/schemas.ts
+@@ -1,7 +1,7 @@
+ import { z } from "zod";
+ 
+ export const createOrderSchema = z.object({
+-  items: z.array(z.object({ productId: z.string().min(1), quantity: z.coerce.number().int().min(1).max(999) })).min(1).max(50),
++  items: z.array(z.object({ productId: z.string().min(1), variantId: z.string().trim().min(1).max(80).optional(), quantity: z.coerce.number().int().min(1).max(999) })).min(1).max(50),
+   shippingId: z.string().min(1),
+   paymentMethod: z.enum(["bank-transfer", "qris", "cod"]),
+   voucherCode: z.string().trim().max(30).optional(),
+diff --git a/src/features/orders/shipping-label-image.ts b/src/features/orders/shipping-label-image.ts
+index e9dd5bb..e41cb6e 100644
+--- a/src/features/orders/shipping-label-image.ts
++++ b/src/features/orders/shipping-label-image.ts
+@@ -123,7 +123,7 @@ export function downloadShippingLabelPng(order: Order) {
+   context.fillText(order.orderNumber, 90, 1405);
+ 
+   const itemCount = order.items.reduce((total, item) => total + item.quantity, 0);
+-  const totalWeight = order.items.reduce((total, item) => total + item.product.weightGrams * item.quantity, 0);
++  const totalWeight = order.items.reduce((total, item) => total + (item.variant?.weightGrams ?? item.product.weightGrams) * item.quantity, 0);
+   context.font = "800 20px Arial";
+   context.fillText("ISI PAKET", 720, 1360);
+   context.font = "700 29px Arial";
+diff --git a/src/types/commerce.ts b/src/types/commerce.ts
+index ad32acf..f9d11b9 100644
+--- a/src/types/commerce.ts
++++ b/src/types/commerce.ts
+@@ -11,6 +11,21 @@ export type ProductStatus = "draft" | "active" | "archived";
+ 
+ export type ProductSpec = { label: string; value: string };
+ 
++export type ProductVariant = {
++  id: string;
++  name: string;
++  sku: string;
++  price: number;
++  compareAtPrice?: number;
++  wholesalePrice?: number;
++  wholesaleMinimum?: number;
++  stock: number;
++  minimumStock?: number;
++  weightGrams: number;
++  isActive?: boolean;
++  sold?: number;
++};
++
+ export type Product = {
+   id: string;
+   slug: string;
+@@ -37,6 +52,7 @@ export type Product = {
+   isNew?: boolean;
+   status?: ProductStatus;
+   specs: ProductSpec[];
++  variants?: ProductVariant[];
+   createdAt?: string;
+   updatedAt?: string;
+ };
+@@ -54,11 +70,13 @@ export type Category = {
+ 
+ export type CartLine = {
+   productId: string;
++  variantId?: string;
+   quantity: number;
+ };
+ 
+ export type CartDisplayLine = {
+   product: Product;
++  variant?: ProductVariant;
+   quantity: number;
+   unitPrice: number;
+   subtotal: number;
+@@ -142,6 +160,8 @@ export type InventoryMovement = {
+   productId: string;
+   productName: string;
+   sku: string;
++  variantId?: string;
++  variantName?: string;
+   type: InventoryMovementType;
+   quantity: number;
+   stockBefore: number;

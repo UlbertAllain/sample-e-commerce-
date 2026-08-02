@@ -6,14 +6,10 @@ import {
   FileText,
   PackageCheck,
   Printer,
-  Truck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  advanceShipment,
-  getOrder,
-} from "@/features/orders/order-storage";
+import { ApiClientError, apiFetch } from "@/lib/api/client";
 import {
   downloadShippingLabelPng,
   printShippingLabelPdf,
@@ -23,8 +19,23 @@ import type { Order } from "@/types/commerce";
 
 export function OrderClient({ orderNumber }: { orderNumber: string }) {
   const [order, setOrder] = useState<Order | null>();
+  const [error, setError] = useState("");
 
-  useEffect(() => setOrder(getOrder(orderNumber)), [orderNumber]);
+  useEffect(() => {
+    let active = true;
+    apiFetch<Order>(`/api/store/orders/${encodeURIComponent(orderNumber)}`)
+      .then((nextOrder) => {
+        if (active) setOrder(nextOrder);
+      })
+      .catch((caught) => {
+        if (!active) return;
+        setError(caught instanceof ApiClientError ? caught.message : "Pesanan tidak dapat dimuat.");
+        setOrder(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [orderNumber]);
 
   if (order === undefined) {
     return <div className="shell loading-state">Memuat pesanan...</div>;
@@ -35,21 +46,10 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
       <section className="shell empty-state">
         <PackageCheck size={46} />
         <h1>Pesanan tidak ditemukan</h1>
-        <p>Pesanan hanya tersimpan pada browser yang digunakan untuk checkout.</p>
+        <p>{error || "Pesanan tidak tersedia atau bukan milik akun ini."}</p>
         <Button href="/tracking">Buka tracking</Button>
       </section>
     );
-  }
-
-  const delivered = order.shipmentStatus === "delivered";
-  const canAdvanceShipment =
-    (order.paymentStatus === "paid" || order.paymentMethod === "cod") &&
-    order.id !== "demo-order" &&
-    !delivered;
-
-  function nextStatus() {
-    const updated = advanceShipment(orderNumber);
-    if (updated) setOrder({ ...updated });
   }
 
   function printInvoice() {
@@ -108,11 +108,6 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
         >
           <Download size={17} /> Unduh resi PNG
         </button>
-        {canAdvanceShipment && (
-          <button className="button button--dark" onClick={nextStatus}>
-            <Truck size={17} /> Majukan status
-          </button>
-        )}
       </div>
 
       <div className="order-layout">
@@ -158,7 +153,7 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
             <div className="invoice-brand">
               <img src="/brand/logo-mark.svg" alt="" />
               <div>
-                <strong>BERKAH OYOT</strong>
+                <strong>{order.sender.storeName.toUpperCase()}</strong>
                 <span>Invoice {order.orderNumber}</span>
               </div>
             </div>
@@ -190,10 +185,10 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
                 <span>Subtotal</span>
               </div>
               {order.items.map((line) => (
-                <div className="invoice-row" key={line.product.id}>
+                <div className="invoice-row" key={`${line.product.id}-${line.variant?.id ?? "default"}`}>
                   <span>
-                    {line.product.shortName}
-                    <small>{line.product.sku}</small>
+                    {line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}
+                    <small>{line.variant?.sku ?? line.product.sku}</small>
                   </span>
                   <span>{line.quantity}</span>
                   <span>{formatCurrency(line.unitPrice)}</span>
@@ -226,7 +221,7 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
         <aside className="shipping-label order-card" id="shipping-label">
           <div className="label-header">
             <div>
-              <strong>BERKAH OYOT</strong>
+              <strong>{order.sender.storeName.toUpperCase()}</strong>
               <span>SHIPPING LABEL</span>
             </div>
             <b>{order.shipping.courier}</b>
@@ -235,11 +230,11 @@ export function OrderClient({ orderNumber }: { orderNumber: string }) {
           <div className="label-route">
             <div>
               <span>FROM</span>
-              <strong>BERKAH OYOT</strong>
+              <strong>{order.sender.storeName.toUpperCase()}</strong>
               <p>
-                Blimbing, Wonorejo, Polokarto, Sukoharjo 57555
+                {order.sender.address}
                 <br />
-                +62 882-0053-95987
+                {order.sender.phone}
               </p>
             </div>
             <div>

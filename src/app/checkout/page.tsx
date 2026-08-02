@@ -22,10 +22,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-provider";
 import { useStore } from "@/context/store-provider";
-import { shippingServices } from "@/data/shipping";
-import { createOrder } from "@/features/orders/order-storage";
+import { shippingServices as fallbackShippingServices } from "@/data/shipping";
+import { apiFetch } from "@/lib/api/client";
 import { formatCurrency } from "@/lib/formatters";
-import type { CustomerAddress, PaymentMethod } from "@/types/commerce";
+import type { Order, PaymentMethod, ShippingService } from "@/types/commerce";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -37,7 +37,9 @@ export default function CheckoutPage() {
     hydrated: cartHydrated,
   } = useStore();
 
-  const [shippingId, setShippingId] = useState(shippingServices[0].id);
+  const [shippingServices, setShippingServices] = useState<ShippingService[]>(fallbackShippingServices);
+  const [availablePayments, setAvailablePayments] = useState<PaymentMethod[]>(["bank-transfer", "qris", "cod"]);
+  const [shippingId, setShippingId] = useState(fallbackShippingServices[0].id);
   const [paymentMethod, setPaymentMethod] =
     useState<PaymentMethod>("bank-transfer");
   const [voucherInput, setVoucherInput] = useState("");
@@ -64,6 +66,22 @@ export default function CheckoutPage() {
     0,
   );
 
+
+  useEffect(() => {
+    apiFetch<{ shippingServices: ShippingService[]; paymentMethods: PaymentMethod[] }>("/api/store/settings")
+      .then((settings) => {
+        if (settings.shippingServices.length) {
+          setShippingServices(settings.shippingServices);
+          setShippingId((current) => settings.shippingServices.some((item) => item.id === current) ? current : settings.shippingServices[0].id);
+        }
+        if (settings.paymentMethods.length) {
+          setAvailablePayments(settings.paymentMethods);
+          setPaymentMethod((current) => settings.paymentMethods.includes(current) ? current : settings.paymentMethods[0]);
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
   useEffect(() => {
     if (authHydrated && !user) {
       router.replace("/login?next=/checkout");
@@ -83,32 +101,28 @@ export default function CheckoutPage() {
     setVoucherMessage("Kode tidak dikenali. Coba gunakan AQUA10.");
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!displayLines.length || !user) return;
 
     setSubmitting(true);
-
-    const customer: CustomerAddress = {
-      ...user.profile,
-      note: note.trim(),
-    };
-
-    const order = createOrder({
-      customer,
-      items: displayLines,
-      shipping,
-      paymentMethod,
-      voucherCode,
-      discount,
-    });
-
-    clearCart();
-    router.push(
-      paymentMethod === "cod"
-        ? `/orders/${order.orderNumber}`
-        : `/payment/${order.orderNumber}`,
-    );
+    try {
+      const order = await apiFetch<Order>("/api/store/orders", {
+        method: "POST",
+        body: JSON.stringify({
+          items: displayLines.map((line) => ({ productId: line.product.id, variantId: line.variant?.id, quantity: line.quantity })),
+          shippingId: shipping.id,
+          paymentMethod,
+          voucherCode,
+          note: note.trim() || undefined,
+        }),
+      });
+      clearCart();
+      router.push(paymentMethod === "cod" ? `/orders/${order.orderNumber}` : `/payment/${order.orderNumber}`);
+    } catch (caught) {
+      setVoucherMessage(caught instanceof Error ? caught.message : "Pesanan gagal dibuat.");
+      setSubmitting(false);
+    }
   }
 
   if (!authHydrated || !cartHydrated || !user) {
@@ -256,7 +270,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="payment-choices">
-              <label
+              {availablePayments.includes("bank-transfer") && <label
                 className={paymentMethod === "bank-transfer" ? "active" : ""}
               >
                 <input
@@ -269,9 +283,9 @@ export default function CheckoutPage() {
                   <small>Virtual account</small>
                 </span>
                 <b>VA</b>
-              </label>
+              </label>}
 
-              <label className={paymentMethod === "qris" ? "active" : ""}>
+              {availablePayments.includes("qris") && <label className={paymentMethod === "qris" ? "active" : ""}>
                 <input
                   type="radio"
                   checked={paymentMethod === "qris"}
@@ -282,9 +296,9 @@ export default function CheckoutPage() {
                   <small>Pembayaran kode QR</small>
                 </span>
                 <b>QR</b>
-              </label>
+              </label>}
 
-              <label className={paymentMethod === "cod" ? "active" : ""}>
+              {availablePayments.includes("cod") && <label className={paymentMethod === "cod" ? "active" : ""}>
                 <input
                   type="radio"
                   checked={paymentMethod === "cod"}
@@ -295,7 +309,7 @@ export default function CheckoutPage() {
                   <small>COD saat paket diterima</small>
                 </span>
                 <b>COD</b>
-              </label>
+              </label>}
             </div>
           </section>
         </div>
@@ -308,10 +322,10 @@ export default function CheckoutPage() {
 
           <div className="checkout-items">
             {displayLines.map((line) => (
-              <article key={line.product.id}>
+              <article key={`${line.product.id}-${line.variant?.id ?? "default"}`}>
                 <img src={line.product.image} alt="" />
                 <div>
-                  <strong>{line.product.shortName}</strong>
+                  <strong>{line.product.shortName}{line.variant ? ` · ${line.variant.name}` : ""}</strong>
                   <span>
                     {line.quantity} × {formatCurrency(line.unitPrice)}
                   </span>
@@ -378,7 +392,7 @@ export default function CheckoutPage() {
           <div className="summary-security">
             <ShieldCheck size={16} />
             <span>
-              Pembayaran pada versi pratinjau belum terhubung ke payment gateway.
+              Transaksi ini merupakan simulasi dan tidak memproses uang nyata.
             </span>
           </div>
         </aside>

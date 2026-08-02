@@ -1,0 +1,11 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Seluruh data commerce dibaca dan dimutasi melalui Next.js Route Handlers
+    // yang memverifikasi Firebase session cookie dan role di server.
+    // Firebase Admin SDK melewati rules ini.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

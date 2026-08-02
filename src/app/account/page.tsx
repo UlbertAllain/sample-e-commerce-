@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/context/auth-provider";
-import { getOrdersByCustomerEmail } from "@/features/orders/order-storage";
+import { apiFetch } from "@/lib/api/client";
 import { formatCurrency, formatDateTime } from "@/lib/formatters";
 import type { CustomerProfile } from "@/types/auth";
 import type { Order } from "@/types/commerce";
@@ -15,22 +15,24 @@ export default function AccountPage() {
   const { user, hydrated, logout, updateProfile } = useAuth();
   const [editing, setEditing] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [orders, setOrders] = useState<Order[]>([]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (hydrated && !user) router.replace("/login?next=/account");
+    if (hydrated && user?.role === "admin") router.replace("/admin");
   }, [hydrated, router, user]);
 
   useEffect(() => {
-    if (user) setOrders(getOrdersByCustomerEmail(user.profile.email));
+    if (user?.role === "customer") {
+      apiFetch<Order[]>("/api/store/orders").then(setOrders).catch((value) => setError(value instanceof Error ? value.message : "Riwayat pesanan gagal dimuat."));
+    }
   }, [user]);
 
-  const initials = useMemo(
-    () => user?.profile.fullName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase(),
-    [user],
-  );
+  const initials = useMemo(() => user?.profile.fullName.split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase(), [user]);
 
-  function handleSave(event: FormEvent<HTMLFormElement>) {
+  async function handleSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!user) return;
     const data = new FormData(event.currentTarget);
@@ -44,21 +46,30 @@ export default function AccountPage() {
       postalCode: String(data.get("postalCode") ?? ""),
       address: String(data.get("address") ?? ""),
     };
-    updateProfile(profile);
-    setEditing(false);
-    setMessage("Profil dan alamat utama berhasil diperbarui.");
-    window.setTimeout(() => setMessage(""), 2200);
+    setSaving(true);
+    setError("");
+    try {
+      await updateProfile(profile);
+      setEditing(false);
+      setMessage("Profil dan alamat utama berhasil diperbarui.");
+      window.setTimeout(() => setMessage(""), 2200);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Profil gagal diperbarui.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  if (!hydrated || !user) return <div className="shell loading-state">Memuat akun pelanggan...</div>;
+  if (!hydrated || !user || user.role !== "customer") return <div className="shell loading-state">Memuat akun pelanggan...</div>;
 
   return (
     <section className="account-page shell section">
       <div className="account-head">
         <div className="account-identity"><span>{initials}</span><div><small>AKUN PELANGGAN</small><h1>{user.profile.fullName}</h1><p>{user.profile.email}</p></div></div>
-        <button className="button button--secondary" onClick={() => { logout(); router.push("/"); }}><LogOut size={17} /> Keluar</button>
+        <button className="button button--secondary" onClick={async () => { await logout(); router.push("/"); }}><LogOut size={17} /> Keluar</button>
       </div>
       {message && <div className="success-banner">{message}</div>}
+      {error && <div className="form-error">{error}</div>}
       <div className="account-layout">
         <div className="account-panel">
           <div className="panel-heading"><div><span className="section-kicker">Profil utama</span><h2>Data penerima dan alamat</h2></div><button className="text-action" onClick={() => setEditing((value) => !value)}>{editing ? "Batal" : "Ubah data"}</button></div>
@@ -73,7 +84,7 @@ export default function AccountPage() {
                 <label>Kode pos<input name="postalCode" required defaultValue={user.profile.postalCode} /></label>
                 <label className="span-2">Alamat lengkap<textarea name="address" required rows={4} defaultValue={user.profile.address} /></label>
               </div>
-              <button className="button button--primary"><Save size={17} /> Simpan perubahan</button>
+              <button className="button button--primary" disabled={saving}><Save size={17} /> {saving ? "Menyimpan..." : "Simpan perubahan"}</button>
             </form>
           ) : (
             <div className="profile-summary">

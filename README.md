@@ -108,3 +108,31 @@ Strategi migrasi dijelaskan di [`docs/MIGRATION_TO_PRODUCTION.md`](docs/MIGRATIO
 ## Catatan aset
 
 Gambar produk adalah aset ilustrasi lokal untuk kebutuhan sample. Pada fase produksi, gambar diganti dengan foto produk asli melalui Cloudinary.
+
+---
+
+## Backend dan admin (v1.0.0)
+
+Storefront sekarang menggunakan Firebase Authentication, Firestore melalui Firebase Admin SDK, session cookie HTTP-only, dan Cloudinary signed upload. Panel admin tersedia di:
+
+```text
+/admin/login
+```
+
+Setup lengkap tersedia pada:
+
+```text
+docs/BACKEND_MIGRATION.md
+```
+
+Urutan awal:
+
+```powershell
+Copy-Item .env.example .env.local
+npm install
+npm run admin:create
+npx firebase-tools deploy --only firestore:rules,firestore:indexes
+npm run dev
+```
+
+Setelah login admin, buka **Produk → Impor data awal** untuk mengisi produk dan kategori statis ke Firestore bila koleksinya masih kosong.

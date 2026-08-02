@@ -1,9 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Leaf, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { ProductCard } from "@/components/store/product-card";
 import { Button } from "@/components/ui/button";
-import { categories } from "@/data/categories";
-import { products } from "@/data/products";
+import { useCatalog } from "@/context/catalog-provider";
 import { formatCurrency } from "@/lib/formatters";
 
 const services = [
@@ -25,9 +26,18 @@ const services = [
 ];
 
 export default function HomePage() {
+  const { products, categories, loading } = useCatalog();
   const featured = products.filter((product) => product.isFeatured).slice(0, 6);
   const highlights = products.slice(0, 3);
   const heroProduct = products.find((product) => product.category === "decoration") ?? products[0];
+
+  if (loading && !products.length) {
+    return <div className="shell loading-state">Memuat katalog...</div>;
+  }
+
+  if (!heroProduct) {
+    return <section className="shell empty-state"><h1>Produk belum tersedia</h1><p>Tambahkan produk melalui dashboard admin.</p><Button href="/admin/products/new">Tambah produk</Button></section>;
+  }
 
   return (
     <>

@@ -1,5 +1,7 @@
+"use client";
+
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,11 +12,14 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-export function getFirebaseDb() {
-  if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
-    throw new Error("Konfigurasi Firebase belum diisi. Sample statis tidak membutuhkan Firebase.");
+export function getFirebaseClientApp() {
+  if (getApps().length) return getApp();
+  if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.appId) {
+    throw new Error("Konfigurasi Firebase Client belum lengkap.");
   }
+  return initializeApp(firebaseConfig);
+}
 
-  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-  return getFirestore(app);
+export function getFirebaseClientAuth() {
+  return getAuth(getFirebaseClientApp());
 }

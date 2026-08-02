@@ -52,7 +52,7 @@ export function SiteHeader() {
             <Link href="/catalog" className="header-action" aria-label="Cari produk">
               <Search size={19} />
             </Link>
-            <Link href={user ? "/account" : "/login"} className="header-action account-link" aria-label="Akun pelanggan">
+            <Link href={user?.role === "admin" ? "/admin" : user ? "/account" : "/login"} className="header-action account-link" aria-label="Akun pelanggan">
               <UserRound size={19} />
               <span>{hydrated && user ? user.profile.fullName.split(" ")[0] : "Masuk"}</span>
             </Link>
@@ -74,8 +74,8 @@ export function SiteHeader() {
             ))}
             <Link href="/catalog" onClick={() => setOpen(false)}>Semua produk</Link>
             <Link href="/tracking" onClick={() => setOpen(false)}>Lacak pesanan</Link>
-            <Link href={user ? "/account" : "/login"} onClick={() => setOpen(false)}>
-              {user ? "Akun saya" : "Masuk / Daftar"}
+            <Link href={user?.role === "admin" ? "/admin" : user ? "/account" : "/login"} onClick={() => setOpen(false)}>
+              {user?.role === "admin" ? "Dashboard admin" : user ? "Akun saya" : "Masuk / Daftar"}
             </Link>
             <Link href="/cart" onClick={() => setOpen(false)}>Keranjang ({itemCount})</Link>
           </nav>

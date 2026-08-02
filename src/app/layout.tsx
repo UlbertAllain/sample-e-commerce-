@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { SiteFooter } from "@/components/layout/site-footer";
-import { SiteHeader } from "@/components/layout/site-header";
+import { SiteChrome } from "@/components/layout/site-chrome";
 import { AuthProvider } from "@/context/auth-provider";
+import { CatalogProvider } from "@/context/catalog-provider";
 import { StoreProvider } from "@/context/store-provider";
 
 export const metadata: Metadata = {
   title: { default: "Berkah Oyot", template: "%s | Berkah Oyot" },
-  description: "Storefront Berkah Oyot untuk katalog, akun pelanggan, checkout, pembayaran, dan pengiriman.",
+  description: "Toko online Berkah Oyot untuk katalog, akun pelanggan, checkout, pembayaran, pengiriman, dan manajemen admin.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -15,11 +15,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="id">
       <body>
         <AuthProvider>
-          <StoreProvider>
-            <SiteHeader />
-            <main>{children}</main>
-            <SiteFooter />
-          </StoreProvider>
+          <CatalogProvider>
+            <StoreProvider>
+              <SiteChrome>{children}</SiteChrome>
+            </StoreProvider>
+          </CatalogProvider>
         </AuthProvider>
       </body>
     </html>

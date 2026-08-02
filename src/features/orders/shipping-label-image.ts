@@ -58,7 +58,7 @@ export function downloadShippingLabelPng(order: Order) {
 
   context.fillStyle = "#101712";
   context.font = "700 42px Arial";
-  context.fillText("BERKAH OYOT", 90, 125);
+  context.fillText(order.sender.storeName.toUpperCase(), 90, 125);
   context.font = "500 22px Arial";
   context.fillText("AQUARIUM SUPPLY · SHIPPING LABEL", 90, 163);
 
@@ -77,10 +77,10 @@ export function downloadShippingLabelPng(order: Order) {
   context.font = "800 20px Arial";
   context.fillText("PENGIRIM / FROM", 90, 265);
   context.font = "700 31px Arial";
-  context.fillText("BERKAH OYOT", 90, 310);
+  context.fillText(order.sender.storeName.toUpperCase(), 90, 310);
   context.font = "400 24px Arial";
-  context.fillText("Blimbing, Wonorejo, Polokarto, Sukoharjo 57555", 90, 350);
-  context.fillText("+62 882-0053-95987", 90, 388);
+  drawWrappedText(context, order.sender.address, 90, 350, 680, 32, 2);
+  context.fillText(order.sender.phone, 90, 418);
 
   context.beginPath();
   context.moveTo(45, 435);
@@ -123,7 +123,7 @@ export function downloadShippingLabelPng(order: Order) {
   context.fillText(order.orderNumber, 90, 1405);
 
   const itemCount = order.items.reduce((total, item) => total + item.quantity, 0);
-  const totalWeight = order.items.reduce((total, item) => total + item.product.weightGrams * item.quantity, 0);
+  const totalWeight = order.items.reduce((total, item) => total + (item.variant?.weightGrams ?? item.product.weightGrams) * item.quantity, 0);
   context.font = "800 20px Arial";
   context.fillText("ISI PAKET", 720, 1360);
   context.font = "700 29px Arial";
@@ -200,10 +200,10 @@ export function printShippingLabelPdf(order: Order) {
 <body>
   <main class="label">
     <header class="head">
-      <div class="brand"><strong>BERKAH OYOT</strong><span>SHIPPING LABEL</span></div>
+      <div class="brand"><strong>${escapeHtml(order.sender.storeName)}</strong><span>SHIPPING LABEL</span></div>
       <div class="courier">${escapeHtml(order.shipping.courier)}</div>
     </header>
-    <section class="route"><span class="caption">FROM</span><strong>BERKAH OYOT</strong><p>Blimbing, Wonorejo, Polokarto, Sukoharjo 57555<br />+62 882-0053-95987</p></section>
+    <section class="route"><span class="caption">FROM</span><strong>${escapeHtml(order.sender.storeName)}</strong><p>${escapeHtml(order.sender.address)}<br />${escapeHtml(order.sender.phone)}</p></section>
     <section class="route"><span class="caption">TO</span><strong>${escapeHtml(order.customer.fullName)}</strong><p>${escapeHtml(customerAddress)}<br />${escapeHtml(order.customer.phone)}</p></section>
     <section class="service"><strong>${escapeHtml(order.shipping.courier)}</strong><span>${escapeHtml(order.shipping.service)}</span></section>
     <div class="barcode">${bars}</div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "@/context/auth-provider";
+import { getFirebaseAuthMessage } from "@/lib/firebase/client-error";
 import type { CustomerRegistration } from "@/types/auth";
 
 export function RegisterClient({ nextPath }: { nextPath: string }) {
@@ -17,7 +18,7 @@ export function RegisterClient({ nextPath }: { nextPath: string }) {
     if (hydrated && user) router.replace(nextPath);
   }, [hydrated, nextPath, router, user]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     const data = new FormData(event.currentTarget);
@@ -42,10 +43,10 @@ export function RegisterClient({ nextPath }: { nextPath: string }) {
 
     setSubmitting(true);
     try {
-      register(registration);
+      await register(registration);
       router.replace(nextPath);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Pendaftaran gagal.");
+      setError(getFirebaseAuthMessage(caught));
       setSubmitting(false);
     }
   }
@@ -90,7 +91,7 @@ export function RegisterClient({ nextPath }: { nextPath: string }) {
           </div>
           {error && <div className="form-error">{error}</div>}
           <div className="register-submit">
-            <p><Check size={16} /> Dengan mendaftar, data akun disimpan pada browser yang sedang digunakan.</p>
+            <p><Check size={16} /> Dengan mendaftar, akun dibuat di Firebase dan profil disimpan secara aman di Firestore.</p>
             <button className="button button--primary" disabled={submitting}>{submitting ? "Membuat akun..." : <>Buat akun <ArrowRight size={18} /></>}</button>
           </div>
         </form>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "@/context/auth-provider";
+import { getFirebaseAuthMessage } from "@/lib/firebase/client-error";
 
 export function LoginClient({ nextPath }: { nextPath: string }) {
   const router = useRouter();
@@ -16,16 +17,16 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
     if (hydrated && user) router.replace(nextPath);
   }, [hydrated, nextPath, router, user]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setSubmitting(true);
     const data = new FormData(event.currentTarget);
     try {
-      login(String(data.get("email") ?? ""), String(data.get("password") ?? ""));
-      router.replace(nextPath);
+      const account = await login(String(data.get("email") ?? ""), String(data.get("password") ?? ""));
+      router.replace(account.role === "admin" && nextPath === "/account" ? "/admin" : nextPath);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Tidak dapat masuk.");
+      setError(getFirebaseAuthMessage(caught));
       setSubmitting(false);
     }
   }
@@ -40,8 +41,8 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
           <p>Profil pelanggan akan digunakan otomatis pada checkout, invoice, dan label pengiriman.</p>
         </div>
         <ul>
-          <li><ShieldCheck size={18} /> Data akun digunakan untuk mempercepat proses checkout.</li>
-          <li><LockKeyhole size={18} /> Profil dan alamat dapat diperbarui dari halaman akun.</li>
+          <li><ShieldCheck size={18} /> Akun diamankan menggunakan Firebase Authentication.</li>
+          <li><LockKeyhole size={18} /> Session login diverifikasi oleh server sebelum data diakses.</li>
         </ul>
       </div>
       <div className="auth-page__form-wrap">
@@ -49,7 +50,7 @@ export function LoginClient({ nextPath }: { nextPath: string }) {
           <div className="auth-form__heading">
             <span className="section-kicker">Selamat datang kembali</span>
             <h2>Masuk ke akun</h2>
-            <p>Gunakan akun yang sebelumnya dibuat pada browser ini.</p>
+            <p>Gunakan email dan password yang sudah terdaftar.</p>
           </div>
           <form onSubmit={handleSubmit}>
             <label className="field-label">
