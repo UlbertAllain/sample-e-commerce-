@@ -1,0 +1,1566 @@
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/public/brand/doodle-arc.svg berkah-style-refresh/public/brand/doodle-arc.svg
+--- berkah-rev/berkah-oyot-storefront-sample/public/brand/doodle-arc.svg	1970-01-01 00:00:00.000000000 +0000
++++ berkah-style-refresh/public/brand/doodle-arc.svg	2026-08-02 12:13:34.975515474 +0000
+@@ -0,0 +1,4 @@
++<svg width="88" height="56" viewBox="0 0 88 56" fill="none" xmlns="http://www.w3.org/2000/svg">
++  <path d="M6 46C14.2857 28.9524 26.7619 18.8571 43.4286 15.7143C60.0952 12.5714 72.2857 17.6667 80 31" stroke="#23A171" stroke-width="4" stroke-linecap="round"/>
++  <path d="M53 7C55.6667 10.3333 57 15.3333 57 22" stroke="#23A171" stroke-width="4" stroke-linecap="round"/>
++</svg>
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/public/brand/doodle-star.svg berkah-style-refresh/public/brand/doodle-star.svg
+--- berkah-rev/berkah-oyot-storefront-sample/public/brand/doodle-star.svg	1970-01-01 00:00:00.000000000 +0000
++++ berkah-style-refresh/public/brand/doodle-star.svg	2026-08-02 12:13:34.975515474 +0000
+@@ -0,0 +1,4 @@
++<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
++  <path d="M20 4L23.9838 15.5766L36 20L23.9838 24.4234L20 36L16.0162 24.4234L4 20L16.0162 15.5766L20 4Z" fill="#DED6FF"/>
++  <path d="M20 4L23.9838 15.5766L36 20L23.9838 24.4234L20 36L16.0162 24.4234L4 20L16.0162 15.5766L20 4Z" stroke="#6B55F8" stroke-width="2" stroke-linejoin="round"/>
++</svg>
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/public/brand/stage-dashboard.svg berkah-style-refresh/public/brand/stage-dashboard.svg
+--- berkah-rev/berkah-oyot-storefront-sample/public/brand/stage-dashboard.svg	1970-01-01 00:00:00.000000000 +0000
++++ berkah-style-refresh/public/brand/stage-dashboard.svg	2026-08-02 12:13:34.975515474 +0000
+@@ -0,0 +1,26 @@
++<svg width="420" height="320" viewBox="0 0 420 320" fill="none" xmlns="http://www.w3.org/2000/svg">
++  <rect width="420" height="320" rx="26" fill="#FFFFFF"/>
++  <rect x="16" y="16" width="72" height="288" rx="20" fill="#F3F5FD"/>
++  <rect x="30" y="42" width="44" height="12" rx="6" fill="#1E2543" fill-opacity="0.14"/>
++  <rect x="28" y="82" width="48" height="40" rx="14" fill="#6B55F8" fill-opacity="0.14"/>
++  <rect x="28" y="136" width="48" height="40" rx="14" fill="#24A673" fill-opacity="0.14"/>
++  <rect x="28" y="190" width="48" height="40" rx="14" fill="#FFD75F" fill-opacity="0.26"/>
++
++  <rect x="104" y="24" width="292" height="54" rx="18" fill="#F8FAFF"/>
++  <rect x="124" y="43" width="120" height="14" rx="7" fill="#1E2543" fill-opacity="0.12"/>
++  <circle cx="362" cy="51" r="12" fill="#24A673" fill-opacity="0.18"/>
++
++  <rect x="104" y="92" width="136" height="86" rx="20" fill="#F8FAFF"/>
++  <rect x="252" y="92" width="144" height="86" rx="20" fill="#F8FAFF"/>
++  <rect x="104" y="190" width="292" height="114" rx="22" fill="#F8FAFF"/>
++
++  <rect x="122" y="114" width="74" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="122" y="136" width="40" height="30" rx="15" fill="#24A673"/>
++  <rect x="270" y="114" width="74" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="270" y="136" width="58" height="30" rx="15" fill="#6B55F8"/>
++
++  <path d="M132 271C157.333 234.333 182.667 216 208 216C233.333 216 258.667 233.333 284 268C309.333 240 334.667 226.667 360 228" stroke="#6B55F8" stroke-width="6" stroke-linecap="round"/>
++  <path d="M132 274C157.333 258.667 182.667 251 208 251C233.333 251 258.667 256 284 266C309.333 248.667 334.667 238.667 360 236" stroke="#24A673" stroke-width="6" stroke-linecap="round"/>
++  <circle cx="208" cy="251" r="8" fill="#FFD75F"/>
++  <circle cx="284" cy="266" r="8" fill="#6B55F8"/>
++</svg>
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/public/brand/stage-mobile.svg berkah-style-refresh/public/brand/stage-mobile.svg
+--- berkah-rev/berkah-oyot-storefront-sample/public/brand/stage-mobile.svg	1970-01-01 00:00:00.000000000 +0000
++++ berkah-style-refresh/public/brand/stage-mobile.svg	2026-08-02 12:13:34.975515474 +0000
+@@ -0,0 +1,29 @@
++<svg width="300" height="590" viewBox="0 0 300 590" fill="none" xmlns="http://www.w3.org/2000/svg">
++  <rect width="300" height="590" rx="44" fill="#FFFFFF"/>
++  <rect x="106" y="16" width="88" height="10" rx="5" fill="#1E2543" fill-opacity="0.16"/>
++  <rect x="20" y="38" width="260" height="532" rx="32" fill="#F8FAFF"/>
++  <rect x="40" y="58" width="124" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="40" y="80" width="180" height="22" rx="11" fill="#24A673" fill-opacity="0.14"/>
++  <rect x="40" y="118" width="220" height="122" rx="24" fill="#FFFFFF"/>
++  <circle cx="84" cy="157" r="24" fill="#FFDB69"/>
++  <rect x="120" y="138" width="104" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="120" y="160" width="72" height="14" rx="7" fill="#1E2543" fill-opacity="0.1"/>
++  <rect x="120" y="190" width="66" height="28" rx="14" fill="#6B55F8"/>
++
++  <rect x="40" y="258" width="220" height="96" rx="24" fill="#FFFFFF"/>
++  <rect x="56" y="278" width="72" height="58" rx="16" fill="#EEF2FF"/>
++  <circle cx="92" cy="306" r="18" fill="#24A673" fill-opacity="0.32"/>
++  <rect x="144" y="282" width="82" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="144" y="304" width="56" height="12" rx="6" fill="#1E2543" fill-opacity="0.1"/>
++  <rect x="144" y="326" width="70" height="10" rx="5" fill="#FFD75F"/>
++
++  <rect x="40" y="372" width="220" height="126" rx="24" fill="#23A171"/>
++  <rect x="56" y="392" width="88" height="12" rx="6" fill="#FFFFFF" fill-opacity="0.28"/>
++  <rect x="56" y="416" width="150" height="16" rx="8" fill="#FFFFFF"/>
++  <rect x="56" y="444" width="84" height="14" rx="7" fill="#FFFFFF" fill-opacity="0.26"/>
++  <rect x="184" y="410" width="56" height="56" rx="12" fill="#EFFFF8"/>
++  <path d="M198 424H226V452H198V424Z" fill="#23A171" fill-opacity="0.22"/>
++  <path d="M200 426H224V450H200V426Z" stroke="#23A171" stroke-width="2" stroke-dasharray="3 3"/>
++
++  <rect x="72" y="526" width="156" height="8" rx="4" fill="#1E2543" fill-opacity="0.12"/>
++</svg>
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/public/brand/stage-storefront.svg berkah-style-refresh/public/brand/stage-storefront.svg
+--- berkah-rev/berkah-oyot-storefront-sample/public/brand/stage-storefront.svg	1970-01-01 00:00:00.000000000 +0000
++++ berkah-style-refresh/public/brand/stage-storefront.svg	2026-08-02 12:13:34.971515474 +0000
+@@ -0,0 +1,51 @@
++<svg width="860" height="520" viewBox="0 0 860 520" fill="none" xmlns="http://www.w3.org/2000/svg">
++  <rect width="860" height="520" rx="28" fill="#FFFFFF"/>
++  <rect x="18" y="18" width="824" height="56" rx="18" fill="#F5F7FF" stroke="#D9E0F2"/>
++  <rect x="38" y="35" width="112" height="22" rx="11" fill="#6B55F8" fill-opacity="0.12"/>
++  <circle cx="726" cy="46" r="10" fill="#6B55F8" fill-opacity="0.18"/>
++  <circle cx="758" cy="46" r="10" fill="#24A673" fill-opacity="0.18"/>
++  <circle cx="790" cy="46" r="10" fill="#FFD75F" fill-opacity="0.3"/>
++
++  <rect x="34" y="102" width="366" height="250" rx="26" fill="#EEF2FF"/>
++  <path d="M54 186C54 151.758 81.7583 124 116 124H318C352.242 124 380 151.758 380 186V292C380 326.242 352.242 354 318 354H116C81.7583 354 54 326.242 54 292V186Z" fill="#FFDB69"/>
++  <circle cx="294" cy="203" r="66" fill="#FFFFFF" fill-opacity="0.5"/>
++  <rect x="74" y="146" width="146" height="18" rx="9" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="74" y="176" width="186" height="36" rx="18" fill="#1E2543"/>
++  <rect x="74" y="224" width="112" height="14" rx="7" fill="#1E2543" fill-opacity="0.14"/>
++  <rect x="74" y="246" width="142" height="14" rx="7" fill="#1E2543" fill-opacity="0.14"/>
++  <rect x="74" y="282" width="118" height="36" rx="18" fill="#24A673"/>
++  <rect x="242" y="116" width="122" height="178" rx="24" fill="#FFFFFF"/>
++  <circle cx="302" cy="170" r="34" fill="#F6CC6A"/>
++  <rect x="274" y="212" width="56" height="56" rx="12" fill="#F1F4FB"/>
++  <path d="M290 228H314V252H290V228Z" fill="#6B55F8" fill-opacity="0.2"/>
++  <path d="M292 230H312V250H292V230Z" stroke="#6B55F8" stroke-width="2" stroke-dasharray="3 3"/>
++
++  <rect x="426" y="102" width="396" height="250" rx="26" fill="#FFFFFF" stroke="#D9E0F2"/>
++  <rect x="448" y="128" width="160" height="82" rx="18" fill="#F7F9FF"/>
++  <rect x="622" y="128" width="176" height="82" rx="18" fill="#F7F9FF"/>
++  <rect x="448" y="224" width="350" height="108" rx="22" fill="#F7F9FF"/>
++  <rect x="470" y="148" width="84" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="470" y="170" width="52" height="28" rx="14" fill="#24A673"/>
++  <rect x="644" y="148" width="76" height="12" rx="6" fill="#1E2543" fill-opacity="0.12"/>
++  <rect x="644" y="172" width="108" height="18" rx="9" fill="#6B55F8" fill-opacity="0.16"/>
++  <g fill="#FFFFFF" stroke="#D9E0F2">
++    <rect x="470" y="246" width="98" height="64" rx="18"/>
++    <rect x="582" y="246" width="98" height="64" rx="18"/>
++    <rect x="694" y="246" width="82" height="64" rx="18"/>
++  </g>
++  <circle cx="519" cy="277" r="18" fill="#FFDB69"/>
++  <circle cx="631" cy="277" r="18" fill="#CFEBDD"/>
++  <circle cx="735" cy="277" r="18" fill="#DED6FF"/>
++  <rect x="34" y="380" width="788" height="118" rx="26" fill="#20264A"/>
++  <rect x="58" y="406" width="120" height="16" rx="8" fill="#FFFFFF" fill-opacity="0.2"/>
++  <rect x="58" y="434" width="194" height="16" rx="8" fill="#FFFFFF" fill-opacity="0.15"/>
++  <rect x="58" y="460" width="174" height="16" rx="8" fill="#FFFFFF" fill-opacity="0.15"/>
++  <g>
++    <rect x="470" y="404" width="82" height="70" rx="18" fill="#2B3360"/>
++    <rect x="568" y="404" width="82" height="70" rx="18" fill="#2B3360"/>
++    <rect x="666" y="404" width="132" height="70" rx="18" fill="#2B3360"/>
++    <rect x="494" y="428" width="34" height="22" rx="11" fill="#24A673"/>
++    <rect x="592" y="428" width="34" height="22" rx="11" fill="#6B55F8"/>
++    <rect x="688" y="426" width="84" height="26" rx="13" fill="#FFD75F"/>
++  </g>
++</svg>
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/src/app/globals.css berkah-style-refresh/src/app/globals.css
+--- berkah-rev/berkah-oyot-storefront-sample/src/app/globals.css	2026-08-02 11:47:24.411469140 +0000
++++ berkah-style-refresh/src/app/globals.css	2026-08-02 12:13:00.419514454 +0000
+@@ -670,3 +670,931 @@
+   .shipping-label { position: static; width: 105mm; min-height: 148mm; margin-inline: auto; padding: 9mm; }
+   .print-invoice { width: 100%; }
+ }
++
++/* ===== V3 DESIGN REFRESH ===== */
++:root {
++  --ink: #1d2340;
++  --ink-2: #30395d;
++  --muted: #66708c;
++  --line: #d9dfef;
++  --line-dark: #c8d1e6;
++  --paper: #ffffff;
++  --canvas: #f5f6fb;
++  --canvas-2: #eef2fb;
++  --forest: #0e9f6e;
++  --forest-dark: #0b8059;
++  --acid: #ffd75f;
++  --sand: #8d8ab5;
++  --danger: #d04d56;
++  --success: #159570;
++  --shadow: 0 24px 80px rgba(31, 42, 82, 0.12);
++  --serif: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++}
++
++body {
++  background:
++    radial-gradient(circle at top left, rgba(144, 116, 255, 0.09), transparent 26%),
++    radial-gradient(circle at top right, rgba(14, 159, 110, 0.09), transparent 18%),
++    var(--canvas);
++}
++
++.section--tight { padding: 40px 0; }
++.section-kicker { color: #6b55f8; }
++.button {
++  min-height: 50px;
++  border-radius: 999px;
++  box-shadow: none;
++}
++.button--primary {
++  color: #fff;
++  background: linear-gradient(135deg, #6b55f8 0%, #24a673 100%);
++}
++.button--secondary,
++.button--ghost,
++.button--outline {
++  border-radius: 999px;
++}
++
++.utility-bar {
++  background: rgba(255,255,255,.8);
++  border-bottom: 1px solid rgba(201, 209, 231, 0.85);
++  backdrop-filter: blur(14px);
++}
++.utility-bar__inner {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 16px;
++  min-height: 40px;
++}
++.utility-bar span {
++  font-size: .73rem;
++  color: var(--muted);
++}
++.site-header {
++  position: sticky;
++  top: 0;
++  z-index: 40;
++  background: rgba(245,246,251,.82);
++  backdrop-filter: blur(14px);
++  border-bottom: 1px solid rgba(201, 209, 231, 0.7);
++}
++.site-header__inner {
++  min-height: 80px;
++}
++.brand {
++  gap: 12px;
++}
++.brand img {
++  width: 48px;
++  height: 48px;
++  border-radius: 14px;
++  box-shadow: 0 12px 24px rgba(79, 91, 168, 0.18);
++}
++.brand strong {
++  font-size: .95rem;
++  letter-spacing: -0.03em;
++}
++.brand span {
++  font-size: .73rem;
++  color: var(--muted);
++  letter-spacing: 0;
++}
++.desktop-nav {
++  gap: 10px;
++}
++.desktop-nav a,
++.category-nav a {
++  border-radius: 999px;
++}
++.desktop-nav a {
++  padding: 10px 14px;
++  color: var(--ink-2);
++  font-size: .84rem;
++  font-weight: 700;
++}
++.desktop-nav a:hover {
++  background: rgba(107, 85, 248, 0.08);
++}
++.header-actions {
++  gap: 10px;
++}
++.header-search-chip {
++  min-height: 42px;
++  padding: 0 14px;
++  display: inline-flex;
++  align-items: center;
++  gap: 8px;
++  border: 1px solid var(--line-dark);
++  border-radius: 999px;
++  color: var(--muted);
++  background: rgba(255,255,255,.9);
++  font-size: .8rem;
++}
++.header-action,
++.account-link,
++.mobile-menu-button {
++  min-height: 42px;
++  border-radius: 999px;
++  background: rgba(255,255,255,.95);
++  border: 1px solid var(--line-dark);
++}
++.account-link {
++  padding: 0 16px;
++  gap: 8px;
++  color: var(--ink);
++}
++.cart-link {
++  min-width: 42px;
++  position: relative;
++}
++.cart-link span {
++  position: absolute;
++  top: -6px;
++  right: -4px;
++  min-width: 22px;
++  height: 22px;
++  display: grid;
++  place-items: center;
++  border-radius: 999px;
++  color: #fff;
++  background: linear-gradient(135deg, #6b55f8 0%, #24a673 100%);
++  font-size: .7rem;
++  font-weight: 800;
++}
++.category-nav-wrap {
++  border-top: 0;
++  background: transparent;
++}
++.category-nav {
++  min-height: 56px;
++  gap: 10px;
++}
++.category-nav a {
++  padding: 10px 14px;
++  color: var(--muted);
++  font-size: .76rem;
++  font-weight: 700;
++  background: rgba(255,255,255,.72);
++  border: 1px solid transparent;
++}
++.category-nav a:hover,
++.category-nav__all {
++  color: var(--ink);
++  border-color: var(--line-dark);
++}
++.mobile-nav {
++  padding: 12px 0 20px;
++  border-top: 1px solid rgba(201, 209, 231, 0.7);
++  background: transparent;
++}
++.mobile-nav a {
++  min-height: 48px;
++  padding: 0 16px;
++  display: flex;
++  align-items: center;
++  border: 1px solid var(--line);
++  border-radius: 18px;
++  background: rgba(255,255,255,.92);
++}
++
++.home-showcase__wrap {
++  display: grid;
++  grid-template-columns: 1.08fr 1.3fr 280px;
++  gap: 22px;
++  align-items: stretch;
++}
++.home-showcase__intro,
++.home-showcase__visual,
++.home-showcase__dna {
++  min-width: 0;
++}
++.home-showcase__intro {
++  padding: 30px 0 16px;
++}
++.home-showcase__intro h1 {
++  margin: 16px 0 18px;
++  font-size: clamp(3rem, 5vw, 4.7rem);
++  line-height: .98;
++  letter-spacing: -0.06em;
++}
++.home-showcase__intro p {
++  max-width: 560px;
++  font-size: 1rem;
++}
++.home-showcase__actions {
++  margin-top: 28px;
++  display: flex;
++  align-items: center;
++  gap: 14px;
++  flex-wrap: wrap;
++}
++.secondary-cta {
++  min-height: 50px;
++  padding: 0 18px;
++  display: inline-flex;
++  align-items: center;
++  gap: 8px;
++  border: 1px solid var(--line-dark);
++  border-radius: 999px;
++  background: rgba(255,255,255,.9);
++  font-size: .88rem;
++  font-weight: 700;
++}
++.home-showcase__chips {
++  margin-top: 24px;
++  display: flex;
++  flex-wrap: wrap;
++  gap: 10px;
++}
++.home-showcase__chips span {
++  min-height: 38px;
++  padding: 0 14px;
++  display: inline-flex;
++  align-items: center;
++  gap: 8px;
++  border-radius: 999px;
++  color: var(--ink-2);
++  background: rgba(255,255,255,.82);
++  border: 1px solid var(--line);
++  font-size: .76rem;
++  font-weight: 700;
++}
++.home-showcase__visual {
++  position: relative;
++  padding: 18px;
++  border: 1px solid rgba(210, 217, 238, 0.9);
++  border-radius: 34px;
++  background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(247,249,255,.88));
++  box-shadow: var(--shadow);
++  overflow: hidden;
++}
++.showcase-canvas {
++  min-height: 570px;
++  position: relative;
++  border-radius: 28px;
++  background: linear-gradient(180deg, #f9fbff 0%, #eef3ff 100%);
++  overflow: hidden;
++}
++.showcase-stage {
++  position: absolute;
++  border-radius: 24px;
++  overflow: hidden;
++  box-shadow: 0 22px 60px rgba(79, 91, 168, 0.16);
++}
++.showcase-stage img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
++}
++.showcase-stage--storefront {
++  inset: 18px 170px 126px 18px;
++}
++.showcase-stage--dashboard {
++  width: 270px;
++  left: 18px;
++  bottom: 18px;
++  aspect-ratio: 1.24;
++}
++.showcase-stage--mobile {
++  width: 250px;
++  right: 24px;
++  top: 48px;
++  aspect-ratio: .51;
++  border: 6px solid #111a38;
++  border-radius: 38px;
++}
++.showcase-sticky {
++  position: absolute;
++  left: 24px;
++  bottom: 22px;
++}
++.sticky-note {
++  width: 195px;
++  padding: 16px;
++  display: grid;
++  gap: 6px;
++  border-radius: 18px;
++  box-shadow: 0 14px 32px rgba(51, 60, 111, 0.16);
++  transform: rotate(-3deg);
++}
++.sticky-note strong {
++  font-size: .86rem;
++}
++.sticky-note span {
++  color: #4f5772;
++  font-size: .72rem;
++  line-height: 1.45;
++}
++.sticky-note--yellow { background: #ffe28c; }
++.sticky-note--purple {
++  width: auto;
++  transform: rotate(-2deg);
++  background: #ded6ff;
++}
++.doodle {
++  position: absolute;
++  pointer-events: none;
++}
++.doodle--arc {
++  top: 10px;
++  right: 96px;
++  width: 70px;
++}
++.doodle--star {
++  right: 40px;
++  bottom: 92px;
++  width: 34px;
++}
++.home-showcase__dna {
++  display: grid;
++  gap: 14px;
++}
++.dna-card {
++  padding: 24px 22px;
++  border: 1px solid rgba(210, 217, 238, 0.9);
++  border-radius: 26px;
++  background: rgba(255,255,255,.82);
++}
++.dna-card h3 {
++  margin-bottom: 10px;
++  font-size: 1.15rem;
++}
++.dna-card p { font-size: .9rem; }
++.dna-card--compact {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 10px;
++}
++.dna-card--compact span {
++  min-height: 38px;
++  padding: 0 14px;
++  display: inline-flex;
++  align-items: center;
++  border-radius: 999px;
++  background: #fff;
++  border: 1px solid var(--line);
++  font-size: .75rem;
++  font-weight: 800;
++}
++
++.feature-rail-v3__grid {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 16px;
++}
++.feature-rail-v3__card,
++.story-panel,
++.story-note-card,
++.category-chip-card,
++.journey-card,
++.spotlight-card,
++.summary-card,
++.checkout-block,
++.choice-card,
++.payment-choices label,
++.product-card,
++.catalog-sidebar,
++.search-field,
++.catalog-toolbar select,
++.product-gallery__main,
++.product-gallery__thumbs button,
++.wholesale-box,
++.auth-form,
++.register-main,
++.register-aside,
++.address-sheet,
++.checkout-note textarea,
++.form-grid label input,
++.form-grid label textarea,
++.auth-page__visual,
++.auth-page__form-wrap,
++.form-section-title,
++.choice-list,
++.site-footer {
++  box-shadow: none;
++}
++.feature-rail-v3__card {
++  padding: 22px;
++  display: grid;
++  grid-template-columns: auto 1fr;
++  gap: 16px;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  border-radius: 24px;
++  background: rgba(255,255,255,.88);
++}
++.feature-rail-v3__icon {
++  width: 48px;
++  height: 48px;
++  display: grid;
++  place-items: center;
++  border-radius: 18px;
++  color: #6b55f8;
++  background: #eef0ff;
++}
++.feature-rail-v3__card strong { display: block; margin-bottom: 6px; font-size: 1rem; }
++.feature-rail-v3__card p { font-size: .84rem; }
++
++.section-heading--stacked { align-items: flex-start; }
++.design-story__grid {
++  display: grid;
++  grid-template-columns: 1.1fr .9fr;
++  gap: 18px;
++}
++.story-panel {
++  padding: 34px;
++  border-radius: 32px;
++}
++.story-panel--dark {
++  color: white;
++  background: linear-gradient(135deg, #1b2244 0%, #2d3564 100%);
++}
++.story-panel__heading {
++  display: inline-flex;
++  align-items: center;
++  gap: 8px;
++  min-height: 38px;
++  padding: 0 12px;
++  border-radius: 999px;
++  color: #cad3ff;
++  background: rgba(255,255,255,.08);
++  font-size: .76rem;
++  font-weight: 700;
++}
++.story-panel h3 {
++  margin: 22px 0 16px;
++  font-size: clamp(1.8rem, 3vw, 3rem);
++  line-height: 1.02;
++}
++.story-panel p { color: #d5dbf7; }
++.story-panel__metrics {
++  margin-top: 26px;
++  display: flex;
++  gap: 10px;
++  flex-wrap: wrap;
++}
++.story-panel__metrics span {
++  min-height: 42px;
++  padding: 0 14px;
++  display: inline-flex;
++  align-items: center;
++  gap: 8px;
++  border-radius: 999px;
++  background: rgba(255,255,255,.08);
++  font-size: .76rem;
++}
++.story-panel__metrics b { font-size: .9rem; }
++.story-notes {
++  display: grid;
++  gap: 14px;
++}
++.story-note-card {
++  padding: 22px;
++  display: grid;
++  grid-template-columns: 44px 1fr;
++  gap: 16px;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  border-radius: 24px;
++  background: rgba(255,255,255,.88);
++}
++.story-index {
++  width: 44px;
++  height: 44px;
++  display: grid;
++  place-items: center;
++  border-radius: 16px;
++  color: #6b55f8;
++  background: #eef0ff;
++  font-size: .82rem;
++  font-weight: 800;
++}
++.story-note-card h3 { margin-bottom: 7px; font-size: 1rem; }
++.story-note-card p { font-size: .84rem; }
++
++.category-hub-v3__grid {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 16px;
++}
++.category-chip-card {
++  padding: 22px;
++  display: grid;
++  grid-template-columns: auto auto 1fr auto;
++  align-items: start;
++  gap: 16px;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  border-radius: 24px;
++  background: rgba(255,255,255,.88);
++  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
++}
++.category-chip-card:hover {
++  transform: translateY(-3px);
++  border-color: #bfc9e6;
++  box-shadow: 0 14px 28px rgba(70, 87, 148, 0.08);
++}
++.category-chip-card__index,
++.category-chip-card__symbol {
++  width: 44px;
++  height: 44px;
++  display: grid;
++  place-items: center;
++  border-radius: 16px;
++  font-size: .83rem;
++  font-weight: 800;
++}
++.category-chip-card__index { background: #eef0ff; color: #6b55f8; }
++.category-chip-card__symbol { background: #ecfff8; color: #14956c; }
++.category-chip-card h3 { margin-bottom: 6px; font-size: 1rem; }
++.category-chip-card p { font-size: .83rem; }
++
++.product-zone-v3 {
++  background: linear-gradient(180deg, rgba(238,242,251,.84) 0%, rgba(245,246,251,0) 100%);
++}
++.product-grid--feature-v3 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
++.product-card {
++  border-radius: 26px;
++  overflow: hidden;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  background: rgba(255,255,255,.92);
++  transition: transform .18s ease, box-shadow .18s ease;
++}
++.product-card:hover {
++  transform: translateY(-4px);
++  box-shadow: 0 18px 36px rgba(73, 88, 142, 0.10);
++}
++.product-card__media {
++  min-height: 240px;
++  background: linear-gradient(180deg, #f6f8ff 0%, #edf2ff 100%);
++}
++.product-card__media img {
++  width: 84%;
++  max-height: 180px;
++}
++.product-card__badges span {
++  border-radius: 999px;
++  background: rgba(255,255,255,.96);
++}
++.product-card__open {
++  width: 42px;
++  height: 42px;
++  border-radius: 14px;
++  background: rgba(255,255,255,.92);
++}
++.product-card__body {
++  padding: 18px 18px 16px;
++}
++.product-card__meta { font-size: .72rem; }
++.product-card__title {
++  min-height: 48px;
++  margin-top: 10px;
++  font-family: var(--sans);
++  font-size: 1.02rem;
++  font-weight: 800;
++}
++.product-card__price-row strong {
++  font-family: var(--sans);
++  font-size: 1.05rem;
++  font-weight: 800;
++}
++.product-card__price-row button {
++  width: 42px;
++  height: 42px;
++  border: 1px solid var(--line);
++  border-radius: 14px;
++  color: #fff;
++  background: linear-gradient(135deg, #6b55f8 0%, #24a673 100%);
++}
++.product-card__foot {
++  color: var(--muted);
++  font-size: .69rem;
++}
++
++.experience-flow__layout {
++  display: grid;
++  grid-template-columns: 1fr .92fr;
++  gap: 20px;
++}
++.experience-flow__layout h2 {
++  margin: 12px 0 16px;
++  font-size: clamp(2.1rem, 4vw, 3.6rem);
++  line-height: 1.02;
++}
++.experience-flow__stack {
++  margin-top: 22px;
++  display: grid;
++  gap: 12px;
++}
++.journey-card {
++  padding: 18px 20px;
++  display: grid;
++  grid-template-columns: 42px 1fr;
++  gap: 16px;
++  align-items: center;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  border-radius: 22px;
++  background: rgba(255,255,255,.88);
++}
++.journey-card b {
++  width: 42px;
++  height: 42px;
++  display: grid;
++  place-items: center;
++  border-radius: 16px;
++  color: #14956c;
++  background: #ecfff8;
++}
++.journey-card span { font-size: .9rem; }
++.spotlight-stack {
++  position: relative;
++  display: grid;
++  gap: 14px;
++}
++.spotlight-card {
++  padding: 18px;
++  display: grid;
++  grid-template-columns: 104px 1fr;
++  gap: 16px;
++  align-items: center;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  border-radius: 24px;
++  background: rgba(255,255,255,.88);
++}
++.spotlight-card__media {
++  height: 104px;
++  display: grid;
++  place-items: center;
++  border-radius: 20px;
++  background: linear-gradient(180deg, #f6f8ff 0%, #edf2ff 100%);
++}
++.spotlight-card__media img {
++  width: 72%;
++  max-height: 76px;
++  object-fit: contain;
++}
++.spotlight-card span {
++  display: block;
++  margin-bottom: 5px;
++  color: #6b55f8;
++  font-size: .72rem;
++  font-weight: 800;
++}
++.spotlight-card strong {
++  display: block;
++  margin-bottom: 6px;
++  font-size: 1rem;
++}
++.spotlight-card p { font-size: .83rem; }
++
++.promo-ribbon-v3 {
++  padding: 40px;
++  display: grid;
++  grid-template-columns: 1fr auto;
++  align-items: center;
++  gap: 24px;
++  border-radius: 34px;
++  color: #fff;
++  background: linear-gradient(135deg, #6b55f8 0%, #1b2244 52%, #24a673 100%);
++}
++.promo-ribbon-v3 h2 {
++  margin: 14px 0 12px;
++  font-size: clamp(2rem, 4vw, 3.7rem);
++  line-height: 1.02;
++}
++.promo-ribbon-v3 h2 em { color: #ffe28c; font-style: normal; }
++.promo-ribbon-v3 p,
++.section-kicker--light { color: rgba(255,255,255,.8); }
++.promo-ribbon-v3__code {
++  min-width: 230px;
++  padding: 24px;
++  display: grid;
++  gap: 8px;
++  border: 1px solid rgba(255,255,255,.2);
++  border-radius: 28px;
++  background: rgba(255,255,255,.08);
++}
++.promo-ribbon-v3__code span { font-size: .68rem; font-weight: 800; letter-spacing: .14em; }
++.promo-ribbon-v3__code strong { font-size: 2rem; }
++.promo-ribbon-v3__code a { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 700; }
++
++.site-footer {
++  margin-top: 100px;
++  padding: 40px 0 0;
++  border-top: 1px solid rgba(201, 209, 231, 0.82);
++  background: rgba(255,255,255,.65);
++}
++.footer-showcase {
++  margin-bottom: 34px;
++  padding: 30px 32px;
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  gap: 22px;
++  border: 1px solid rgba(210, 217, 238, 0.95);
++  border-radius: 30px;
++  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(248,249,255,.9));
++}
++.footer-showcase h2 {
++  margin: 10px 0 12px;
++  font-size: clamp(2rem, 4vw, 3.2rem);
++  line-height: 1.02;
++}
++.footer-cta {
++  min-height: 48px;
++  padding: 0 20px;
++  display: inline-flex;
++  align-items: center;
++  border-radius: 999px;
++  color: #fff;
++  background: linear-gradient(135deg, #6b55f8 0%, #24a673 100%);
++  font-weight: 800;
++}
++.footer-grid {
++  padding: 32px 0;
++  border-top: 0;
++}
++.footer-about p,
++.footer-grid p,
++.footer-grid a { color: var(--muted); }
++.footer-grid h4 { color: var(--ink); }
++.footer-bottom {
++  border-top: 1px solid rgba(201, 209, 231, 0.82);
++  color: var(--muted);
++}
++
++/* Forms & account surfaces */
++.auth-page,
++.register-page {
++  gap: 22px;
++}
++.auth-page__visual,
++.auth-form,
++.register-aside,
++.register-main,
++.checkout-block,
++.summary-card,
++.address-sheet,
++.catalog-sidebar,
++.empty-card,
++.choice-card,
++.payment-choices label,
++.product-gallery__main,
++.product-gallery__thumbs button,
++.wholesale-box,
++.search-field,
++.catalog-toolbar select,
++.summary-card,
++.site-footer {
++  border-color: rgba(210, 217, 238, 0.95);
++  border-radius: 26px;
++  background: rgba(255,255,255,.9);
++}
++.auth-page__visual,
++.register-aside {
++  background: linear-gradient(135deg, #1b2244 0%, #3d4888 55%, #24a673 100%);
++}
++.auth-page__visual h1,
++.register-aside h1,
++.register-aside strong,
++.register-aside span,
++.auth-page__visual span,
++.auth-page__visual p,
++.auth-page__visual li { color: #fff; }
++.auth-page__visual ul li,
++.register-aside ol li {
++  border-color: rgba(255,255,255,.15);
++}
++.auth-brand { color: #fff; }
++.field-label,
++.form-grid label,
++.checkout-note,
++.form-section-title strong,
++.block-heading h2,
++.block-heading span,
++.summary-title span,
++.summary-title strong { color: var(--ink); }
++.input-shell,
++.form-grid label input,
++.form-grid label textarea,
++.checkout-note textarea,
++.voucher-field input,
++.voucher-field button,
++.catalog-toolbar select,
++.search-field,
++.auth-form input,
++.register-form input,
++.register-form textarea {
++  border: 1px solid var(--line-dark);
++  border-radius: 18px;
++  background: #fff;
++}
++.input-shell,
++.search-field,
++.catalog-toolbar select,
++.form-grid label input,
++.auth-form input,
++.voucher-field input,
++.voucher-field button {
++  min-height: 52px;
++}
++.payment-choices label.active,
++.choice-card.active,
++.catalog-sidebar button.active {
++  border-color: #6b55f8;
++  background: #f2f1ff;
++}
++.address-sheet__person,
++.summary-security,
++.summary-title,
++.checkout-items article {
++  color: var(--ink);
++}
++
++@media (max-width: 1200px) {
++  .home-showcase__wrap,
++  .design-story__grid,
++  .experience-flow__layout {
++    grid-template-columns: 1fr;
++  }
++  .home-showcase__dna {
++    grid-template-columns: repeat(3, minmax(0, 1fr));
++  }
++}
++
++@media (max-width: 960px) {
++  .utility-bar__inner,
++  .footer-showcase {
++    flex-direction: column;
++    align-items: flex-start;
++  }
++  .feature-rail-v3__grid,
++  .category-hub-v3__grid,
++  .product-grid--feature-v3,
++  .home-showcase__dna {
++    grid-template-columns: 1fr 1fr;
++  }
++  .showcase-canvas {
++    min-height: 460px;
++  }
++  .showcase-stage--storefront {
++    inset: 14px 124px 114px 14px;
++  }
++  .showcase-stage--dashboard {
++    width: 220px;
++  }
++  .showcase-stage--mobile {
++    width: 210px;
++    right: 18px;
++    top: 44px;
++  }
++}
++
++@media (max-width: 720px) {
++  .shell { width: min(100% - 28px, 1240px); }
++  .desktop-nav,
++  .header-search-chip,
++  .home-showcase__dna,
++  .showcase-sticky,
++  .doodle { display: none; }
++  .home-showcase__wrap,
++  .feature-rail-v3__grid,
++  .category-hub-v3__grid,
++  .product-grid--feature-v3 {
++    grid-template-columns: 1fr;
++  }
++  .home-showcase__intro {
++    padding-top: 4px;
++  }
++  .home-showcase__intro h1 {
++    font-size: 2.5rem;
++  }
++  .home-showcase__chips {
++    gap: 8px;
++  }
++  .showcase-canvas {
++    min-height: 380px;
++  }
++  .showcase-stage--storefront {
++    inset: 12px 94px 92px 12px;
++  }
++  .showcase-stage--dashboard {
++    width: 160px;
++    left: 12px;
++    bottom: 12px;
++  }
++  .showcase-stage--mobile {
++    width: 150px;
++    right: 12px;
++    top: 38px;
++    border-width: 4px;
++    border-radius: 28px;
++  }
++  .promo-ribbon-v3 {
++    padding: 28px;
++    grid-template-columns: 1fr;
++  }
++  .category-nav {
++    overflow-x: auto;
++    padding-bottom: 10px;
++    justify-content: flex-start;
++  }
++}
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/src/app/page.tsx berkah-style-refresh/src/app/page.tsx
+--- berkah-rev/berkah-oyot-storefront-sample/src/app/page.tsx	2026-08-02 11:49:07.611472185 +0000
++++ berkah-style-refresh/src/app/page.tsx	2026-08-02 12:11:35.059511936 +0000
+@@ -1,68 +1,274 @@
+ import Link from "next/link";
+-import { ArrowRight, Box, CreditCard, PackageCheck, ShieldCheck, Truck } from "lucide-react";
++import {
++  ArrowRight,
++  BadgeCheck,
++  Boxes,
++  CreditCard,
++  PackageCheck,
++  ShieldCheck,
++  Sparkles,
++  Truck,
++} from "lucide-react";
+ import { ProductCard } from "@/components/store/product-card";
+ import { Button } from "@/components/ui/button";
+ import { categories } from "@/data/categories";
+ import { products } from "@/data/products";
+-import { formatCurrency } from "@/lib/formatters";
+ 
+-const serviceNotes = [
+-  { icon: ShieldCheck, label: "Produk terkurasi", detail: "Spesifikasi jelas untuk kebutuhan yang tepat." },
+-  { icon: Truck, label: "Kurir fleksibel", detail: "Reguler, ekspres, atau ambil langsung." },
+-  { icon: CreditCard, label: "Pembayaran lengkap", detail: "Transfer, QRIS, dan COD." },
+-  { icon: PackageCheck, label: "Resi & tracking", detail: "Status paket tersusun dalam satu alur." },
++const featureRail = [
++  {
++    icon: Boxes,
++    label: "Katalog rapi",
++    detail: "Kategori, filter, dan SKU disusun agar pelanggan cepat menemukan produk.",
++  },
++  {
++    icon: CreditCard,
++    label: "Checkout singkat",
++    detail: "Alamat diambil dari akun pelanggan sehingga checkout tidak berulang.",
++  },
++  {
++    icon: PackageCheck,
++    label: "Resi siap unduh",
++    detail: "Setelah order dibuat, invoice dan label pengiriman langsung tersedia.",
++  },
++];
++
++const systemHighlights = [
++  {
++    title: "Storefront yang jelas",
++    description:
++      "Struktur home, katalog, kartu produk, dan CTA dibuat jelas agar toko terasa profesional, bukan template generik.",
++  },
++  {
++    title: "Alur transaksi lengkap",
++    description:
++      "Mulai dari memilih produk, checkout, pembayaran, sampai tracking dibuat utuh untuk kebutuhan presentasi ke klien.",
++  },
++  {
++    title: "Siap dihubungkan ke backend",
++    description:
++      "Secara visual sudah matang, secara struktur tetap aman untuk tahap integrasi Firestore, Cloudinary, payment, dan kurir nanti.",
++  },
++];
++
++const journey = [
++  "Pelanggan daftar sekali lalu alamat tersimpan otomatis.",
++  "Pilih produk, masukkan keranjang, dan lihat ringkasan order.",
++  "Pilih kurir dan metode pembayaran tanpa isi ulang data diri.",
++  "Unduh invoice, resi, lalu lacak pesanan dari halaman tracking.",
+ ];
+ 
+ export default function HomePage() {
+-  const featured = products.filter((product) => product.isFeatured).slice(0, 6);
+-  const heroProduct = products.find((product) => product.slug.includes("filter-box")) ?? products[0];
++  const featured = products.filter((product) => product.isFeatured).slice(0, 4);
++  const spotlight = products.slice(0, 3);
+ 
+   return (
+     <>
+-      <section className="home-hero">
+-        <div className="shell home-hero__grid">
+-          <div className="home-hero__copy">
+-            <span className="hero-index">01 / AQUARIUM SUPPLY</span>
+-            <h1>Peralatan yang tepat untuk air yang tetap hidup.</h1>
+-            <p>Berkah Oyot membantu penghobi memilih filtrasi, mesin, lampu, dan kebutuhan perawatan tanpa harus menebak-nebak spesifikasi.</p>
+-            <div className="home-hero__actions"><Button href="/catalog">Lihat katalog <ArrowRight size={18} /></Button><Link href="/tracking" className="inline-link">Lacak pesanan <ArrowRight size={16} /></Link></div>
+-            <div className="home-hero__meta"><span><b>90+</b> produk pilihan</span><span><b>6</b> kategori utama</span><span><b>4.8</b> kepuasan toko</span></div>
++      <section className="home-showcase section--tight">
++        <div className="shell home-showcase__wrap">
++          <div className="home-showcase__intro">
++            <span className="section-kicker">BERKAH OYOT · PREMIUM AQUARIUM STORE</span>
++            <h1>Skip the guesswork. Belanja perlengkapan akuarium dengan alur yang lebih rapi.</h1>
++            <p>
++              Sample storefront ini dirancang agar client langsung melihat pengalaman belanja yang modern: home yang kuat,
++              katalog yang jelas, checkout yang singkat, simulasi pembayaran, sampai resi dan tracking.
++            </p>
++
++            <div className="home-showcase__actions">
++              <Button href="/catalog">Mulai belanja <ArrowRight size={18} /></Button>
++              <Link href="/register" className="secondary-cta">Buat akun pelanggan <ArrowRight size={16} /></Link>
++            </div>
++
++            <div className="home-showcase__chips">
++              <span><BadgeCheck size={15} /> Login & register pelanggan</span>
++              <span><ShieldCheck size={15} /> Checkout dengan data akun</span>
++              <span><Truck size={15} /> Resi, PDF, dan tracking</span>
++            </div>
+           </div>
+-          <div className="home-hero__stage">
+-            <div className="stage-label"><span>FEATURED / 2026</span><strong>{heroProduct.shortName}</strong></div>
+-            <div className="stage-image"><img src={heroProduct.image} alt={heroProduct.name} /></div>
+-            <div className="stage-price"><small>Mulai dari</small><strong>{formatCurrency(heroProduct.price)}</strong><Link href={`/products/${heroProduct.slug}`}>Lihat produk <ArrowRight size={15} /></Link></div>
++
++          <div className="home-showcase__visual">
++            <img src="/brand/doodle-arc.svg" alt="" className="doodle doodle--arc" />
++            <img src="/brand/doodle-star.svg" alt="" className="doodle doodle--star" />
++
++            <div className="showcase-canvas">
++              <div className="showcase-stage showcase-stage--storefront">
++                <img src="/brand/stage-storefront.svg" alt="Mockup tampilan storefront Berkah Oyot" />
++              </div>
++              <div className="showcase-stage showcase-stage--dashboard">
++                <img src="/brand/stage-dashboard.svg" alt="Mockup panel ringkasan pesanan dan stok" />
++              </div>
++              <div className="showcase-stage showcase-stage--mobile">
++                <img src="/brand/stage-mobile.svg" alt="Mockup tampilan mobile pelanggan" />
++              </div>
++            </div>
++
++            <div className="showcase-sticky sticky-note sticky-note--yellow">
++              <strong>Fast demo path</strong>
++              <span>Home → Catalog → Cart → Checkout → Payment → Tracking</span>
++            </div>
+           </div>
++
++          <aside className="home-showcase__dna">
++            <div className="dna-card">
++              <h3>Visual DNA</h3>
++              <p>Bentuk kontras, warna lebih hidup, ikon ramah, dan panel UI yang terasa digital tetapi tetap rapi.</p>
++            </div>
++            <div className="dna-card">
++              <h3>Cocok untuk</h3>
++              <p>Storefront e-commerce, sample presentasi klien, dan pondasi menuju implementasi produksi penuh.</p>
++            </div>
++            <div className="dna-card dna-card--compact">
++              <span>Storefront 8</span>
++              <span>Checkout 9</span>
++              <span>Tracking 10</span>
++            </div>
++          </aside>
+         </div>
+       </section>
+ 
+-      <section className="service-rail">
+-        <div className="shell service-rail__grid">{serviceNotes.map(({ icon: Icon, label, detail }) => <article key={label}><Icon size={20} /><div><strong>{label}</strong><span>{detail}</span></div></article>)}</div>
++      <section className="feature-rail-v3 section--tight">
++        <div className="shell feature-rail-v3__grid">
++          {featureRail.map(({ icon: Icon, label, detail }) => (
++            <article key={label} className="feature-rail-v3__card">
++              <div className="feature-rail-v3__icon"><Icon size={20} /></div>
++              <div>
++                <strong>{label}</strong>
++                <p>{detail}</p>
++              </div>
++            </article>
++          ))}
++        </div>
+       </section>
+ 
+-      <section className="section shell category-section">
+-        <div className="editorial-heading"><div><span className="section-kicker">BELANJA BERDASARKAN KEBUTUHAN</span><h2>Temukan komponen berdasarkan sistem akuarium Anda.</h2></div><Link href="/catalog" className="inline-link">Semua kategori <ArrowRight size={16} /></Link></div>
+-        <div className="category-editorial-grid">{categories.map((category, index) => <Link key={category.id} href={`/catalog?category=${category.id}`} className="category-editorial-card"><span className="category-number">0{index + 1}</span><div className="category-symbol">{category.icon}</div><div><h3>{category.name}</h3><p>{category.description}</p></div><ArrowRight size={18} /></Link>)}</div>
++      <section className="section shell design-story">
++        <div className="section-heading section-heading--stacked">
++          <div>
++            <span className="section-kicker">APA YANG DITUNJUKKAN SAMPLE INI</span>
++            <h2>Tampilan depan yang meyakinkan, alur belakang yang siap dilanjutkan.</h2>
++          </div>
++        </div>
++
++        <div className="design-story__grid">
++          <div className="story-panel story-panel--dark">
++            <div className="story-panel__heading">
++              <span>Storefront sample</span>
++              <Sparkles size={18} />
++            </div>
++            <h3>Pengalaman belanja yang lebih gampang dipahami.</h3>
++            <p>
++              Struktur halaman dibuat agar user tidak bingung. CTA utama selalu terlihat, informasi produk tidak terlalu padat,
++              dan setiap langkah transaksi terasa masuk akal.
++            </p>
++            <div className="story-panel__metrics">
++              <span><b>01</b> Katalog</span>
++              <span><b>02</b> Checkout</span>
++              <span><b>03</b> Tracking</span>
++            </div>
++          </div>
++
++          <div className="story-notes">
++            {systemHighlights.map((item, index) => (
++              <article key={item.title} className="story-note-card">
++                <span className="story-index">0{index + 1}</span>
++                <div>
++                  <h3>{item.title}</h3>
++                  <p>{item.description}</p>
++                </div>
++              </article>
++            ))}
++          </div>
++        </div>
+       </section>
+ 
+-      <section className="section product-showcase">
+-        <div className="shell">
+-          <div className="editorial-heading"><div><span className="section-kicker">PILIHAN BERKAH OYOT</span><h2>Produk yang sering dicari untuk setup harian.</h2></div><Link href="/catalog" className="inline-link">Lihat katalog <ArrowRight size={16} /></Link></div>
+-          <div className="product-grid">{featured.map((product) => <ProductCard key={product.id} product={product} />)}</div>
++      <section className="section shell category-hub-v3">
++        <div className="section-heading">
++          <div>
++            <span className="section-kicker">BELANJA BERDASARKAN KEBUTUHAN</span>
++            <h2>Kategori dibuat mudah dipindai dalam sekali lihat.</h2>
++          </div>
++          <Link href="/catalog" className="inline-link">Buka katalog lengkap <ArrowRight size={16} /></Link>
++        </div>
++
++        <div className="category-hub-v3__grid">
++          {categories.map((category, index) => (
++            <Link key={category.id} href={`/catalog?category=${category.id}`} className="category-chip-card">
++              <span className="category-chip-card__index">0{index + 1}</span>
++              <div className="category-chip-card__symbol">{category.icon}</div>
++              <div>
++                <h3>{category.name}</h3>
++                <p>{category.description}</p>
++              </div>
++              <ArrowRight size={16} />
++            </Link>
++          ))}
+         </div>
+       </section>
+ 
+-      <section className="section shell buying-guide">
+-        <div className="buying-guide__visual"><img src="/brand/hero-aquarium.svg" alt="Ilustrasi susunan akuarium" /><span>SETUP NOTE / 001</span></div>
+-        <div className="buying-guide__copy"><span className="section-kicker">BELANJA DENGAN KONTEKS</span><h2>Bukan sekadar memilih produk. Mulai dari kebutuhan sistemnya.</h2><p>Kenali kapasitas akuarium, jenis ikan, debit air, dan media filtrasi sebelum menentukan pompa atau filter. Struktur katalog dibuat agar produk mudah dibandingkan berdasarkan fungsi.</p><ul><li><Box size={18} /> Informasi SKU dan stok tersedia</li><li><Truck size={18} /> Estimasi kurir terlihat sebelum pembayaran</li><li><PackageCheck size={18} /> Resi dapat dicetak atau diunduh setelah pesanan dibuat</li></ul><Button href="/catalog" variant="secondary">Mulai memilih produk</Button></div>
++      <section className="section section--soft product-zone-v3">
++        <div className="shell">
++          <div className="section-heading">
++            <div>
++              <span className="section-kicker">PRODUK POPULER</span>
++              <h2>Barang yang paling pas untuk dijadikan contoh alur belanja.</h2>
++            </div>
++            <Link href="/catalog" className="inline-link">Semua produk <ArrowRight size={16} /></Link>
++          </div>
++          <div className="product-grid product-grid--feature-v3">
++            {featured.map((product) => <ProductCard key={product.id} product={product} />)}
++          </div>
++        </div>
+       </section>
+ 
+-      <section className="section shell promo-editorial">
+-        <div><span className="section-kicker section-kicker--light">PROGRAM PROMO</span><h2>Gunakan kode <em>AQUA10</em> untuk mendapatkan potongan belanja.</h2><p>Potongan 10% dengan nilai maksimal Rp25.000.</p></div>
+-        <div className="promo-code"><span>PROMO CODE</span><strong>AQUA10</strong><Link href="/catalog">Gunakan sekarang <ArrowRight size={15} /></Link></div>
++      <section className="section shell experience-flow">
++        <div className="experience-flow__layout">
++          <div>
++            <span className="section-kicker">PENGALAMAN PELANGGAN</span>
++            <h2>Dirancang untuk mempersingkat langkah yang tidak perlu.</h2>
++            <p>
++              User cukup mendaftar sekali. Setelah itu, alamat utama dipakai ulang pada checkout, invoice, label, dan pelacakan pesanan.
++            </p>
++            <div className="experience-flow__stack">
++              {journey.map((item, index) => (
++                <article key={item} className="journey-card">
++                  <b>0{index + 1}</b>
++                  <span>{item}</span>
++                </article>
++              ))}
++            </div>
++          </div>
++
++          <div className="spotlight-stack">
++            {spotlight.map((product, index) => (
++              <article key={product.id} className="spotlight-card">
++                <div className="spotlight-card__media">
++                  <img src={product.image} alt={product.name} />
++                </div>
++                <div>
++                  <span>Sample product 0{index + 1}</span>
++                  <strong>{product.shortName}</strong>
++                  <p>{product.shortDescription}</p>
++                </div>
++              </article>
++            ))}
++            <div className="sticky-note sticky-note--purple">
++              <strong>Data pelanggan</strong>
++              <span>Register sekali, checkout otomatis mengambil data profil akun.</span>
++            </div>
++          </div>
++        </div>
+       </section>
+ 
+-      <section className="section home-closing"><div className="shell"><span>BERKAH OYOT / AQUARIUM SUPPLY</span><h2>Mulai dari air yang jernih.<br />Bangun ekosistem yang stabil.</h2><Button href="/catalog">Belanja perlengkapan <ArrowRight size={18} /></Button></div></section>
++      <section className="section shell promo-ribbon-v3">
++        <div>
++          <span className="section-kicker section-kicker--light">PROMO SAMPLE</span>
++          <h2>Pakai kode <em>AQUA10</em> untuk memperlihatkan simulasi diskon pada checkout.</h2>
++          <p>Potongan 10% maksimal Rp25.000 dan langsung terlihat pada ringkasan pesanan.</p>
++        </div>
++        <div className="promo-ribbon-v3__code">
++          <span>KODE PROMO</span>
++          <strong>AQUA10</strong>
++          <Link href="/catalog">Coba di katalog <ArrowRight size={15} /></Link>
++        </div>
++      </section>
+     </>
+   );
+ }
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/src/components/layout/site-footer.tsx berkah-style-refresh/src/components/layout/site-footer.tsx
+--- berkah-rev/berkah-oyot-storefront-sample/src/components/layout/site-footer.tsx	2026-08-02 11:52:05.503477433 +0000
++++ berkah-style-refresh/src/components/layout/site-footer.tsx	2026-08-02 12:11:52.619512454 +0000
+@@ -3,20 +3,60 @@
+ export function SiteFooter() {
+   return (
+     <footer className="site-footer no-print">
+-      <div className="shell footer-topline"><span>BERKAH OYOT</span><p>Peralatan yang tepat membuat ekosistem akuarium lebih stabil.</p></div>
++      <div className="shell footer-showcase">
++        <div>
++          <span className="section-kicker">BERKAH OYOT</span>
++          <h2>Storefront sample yang siap dipresentasikan.</h2>
++          <p>
++            Dibuat untuk menunjukkan alur e-commerce yang utuh: katalog, akun pelanggan,
++            checkout otomatis, pembayaran simulasi, sampai tracking pengiriman.
++          </p>
++        </div>
++        <Link href="/catalog" className="footer-cta">Buka katalog</Link>
++      </div>
++
+       <div className="shell footer-grid">
+         <div className="footer-about">
+           <Link href="/" className="brand brand--footer">
+             <img src="/brand/logo-mark.svg" alt="" />
+-            <div><strong>BERKAH OYOT</strong><span>AQUARIUM SUPPLY</span></div>
++            <div>
++              <strong>BERKAH OYOT</strong>
++              <span>Premium Aquarium Store</span>
++            </div>
+           </Link>
+-          <p>Toko perlengkapan filtrasi, mesin, pencahayaan, dekorasi, pakan, dan sparepart akuarium.</p>
++          <p>
++            Menjual kebutuhan filter, pompa, lampu, dekorasi, pakan, dan aksesoris akuarium.
++            Flow storefront saat ini dibuat statis sebagai sample presentasi client.
++          </p>
++        </div>
++
++        <div>
++          <h4>Navigasi</h4>
++          <Link href="/">Beranda</Link>
++          <Link href="/catalog">Katalog</Link>
++          <Link href="/tracking">Lacak pesanan</Link>
++          <Link href="/cart">Keranjang</Link>
+         </div>
+-        <div><h4>Belanja</h4><Link href="/catalog">Semua produk</Link><Link href="/catalog?category=filter">Filtrasi</Link><Link href="/catalog?category=machine">Mesin & pompa</Link><Link href="/cart">Keranjang</Link></div>
+-        <div><h4>Layanan</h4><Link href="/tracking">Lacak pesanan</Link><Link href="/account">Akun pelanggan</Link><Link href="/login">Masuk</Link><Link href="/register">Daftar</Link></div>
+-        <div><h4>Toko</h4><p>Blimbing, Wonorejo, Polokarto<br />Sukoharjo, Jawa Tengah 57555</p><p>+62 882-0053-95987</p><p>admin@berkahoyot.com</p></div>
++
++        <div>
++          <h4>Akun</h4>
++          <Link href="/register">Daftar</Link>
++          <Link href="/login">Masuk</Link>
++          <Link href="/account">Profil pelanggan</Link>
++        </div>
++
++        <div>
++          <h4>Kontak</h4>
++          <p>Blimbing, Wonorejo, Polokarto, Sukoharjo, Jawa Tengah 57555</p>
++          <p>+62 882-0053-95987</p>
++          <p>admin@berkahoyot.com</p>
++        </div>
++      </div>
++
++      <div className="shell footer-bottom">
++        <span>© 2026 Berkah Oyot</span>
++        <span>Storefront sample · Next.js · Firestore-ready · Cloudinary-ready</span>
+       </div>
+-      <div className="shell footer-bottom"><span>© 2026 Berkah Oyot</span><span>Aquarium Supply · Sukoharjo</span></div>
+     </footer>
+   );
+ }
+diff -ruN berkah-rev/berkah-oyot-storefront-sample/src/components/layout/site-header.tsx berkah-style-refresh/src/components/layout/site-header.tsx
+--- berkah-rev/berkah-oyot-storefront-sample/src/components/layout/site-header.tsx	2026-08-02 11:39:52.567455811 +0000
++++ berkah-style-refresh/src/components/layout/site-header.tsx	2026-08-02 12:11:52.579512453 +0000
+@@ -8,16 +8,16 @@
+ 
+ const nav = [
+   { href: "/", label: "Beranda" },
+-  { href: "/catalog", label: "Belanja" },
++  { href: "/catalog", label: "Katalog" },
+   { href: "/tracking", label: "Lacak Pesanan" },
+ ];
+ 
+ const categoryNav = [
+   { href: "/catalog?category=filter", label: "Filtrasi" },
+   { href: "/catalog?category=machine", label: "Mesin & Pompa" },
+-  { href: "/catalog?category=lighting", label: "Pencahayaan" },
++  { href: "/catalog?category=lighting", label: "Lampu" },
+   { href: "/catalog?category=decoration", label: "Dekorasi" },
+-  { href: "/catalog?category=food-medicine", label: "Pakan & Perawatan" },
++  { href: "/catalog?category=food-medicine", label: "Pakan & Obat" },
+ ];
+ 
+ export function SiteHeader() {
+@@ -28,42 +28,77 @@
+   return (
+     <>
+       <div className="utility-bar no-print">
+-        <div className="shell"><span>Perlengkapan akuarium terkurasi</span><span>Pengiriman dari Sukoharjo · Senin–Sabtu</span></div>
++        <div className="shell utility-bar__inner">
++          <span>Premium Aquarium Store · Demo storefront sample</span>
++          <span>Login pelanggan, checkout otomatis, tracking, dan resi siap unduh</span>
++        </div>
+       </div>
+       <header className="site-header no-print">
+         <div className="shell site-header__inner">
+           <Link href="/" className="brand" aria-label="Berkah Oyot">
+             <img src="/brand/logo-mark.svg" alt="" />
+-            <div><strong>BERKAH OYOT</strong><span>AQUARIUM SUPPLY</span></div>
++            <div>
++              <strong>BERKAH OYOT</strong>
++              <span>Premium Aquarium Store</span>
++            </div>
+           </Link>
++
+           <nav className="desktop-nav">
+-            {nav.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}
++            {nav.map((item) => (
++              <Link href={item.href} key={item.href}>
++                {item.label}
++              </Link>
++            ))}
+           </nav>
++
+           <div className="header-actions">
+-            <Link href="/catalog" className="header-action" aria-label="Cari produk"><Search size={19} /></Link>
++            <Link href="/catalog" className="header-search-chip" aria-label="Cari atau telusuri katalog">
++              <Search size={16} />
++              <span>Cari produk</span>
++            </Link>
++
+             <Link href={user ? "/account" : "/login"} className="account-link" aria-label="Akun pelanggan">
+               <UserRound size={18} />
+               <span>{hydrated && user ? user.profile.fullName.split(" ")[0] : "Masuk"}</span>
+             </Link>
++
+             <Link href="/cart" className="header-action cart-link" aria-label="Keranjang">
+-              <ShoppingBag size={19} /><span>{itemCount}</span>
++              <ShoppingBag size={19} />
++              <span>{itemCount}</span>
+             </Link>
++
+             <button className="mobile-menu-button" onClick={() => setOpen((value) => !value)} aria-label="Menu">
+               {open ? <X size={22} /> : <Menu size={22} />}
+             </button>
+           </div>
+         </div>
++
+         <div className="category-nav-wrap">
+           <nav className="shell category-nav">
+-            {categoryNav.map((item) => <Link href={item.href} key={item.href}>{item.label}</Link>)}
+-            <Link href="/catalog" className="category-nav__all">Lihat semua produk</Link>
++            {categoryNav.map((item) => (
++              <Link href={item.href} key={item.href}>
++                {item.label}
++              </Link>
++            ))}
++            <Link href="/catalog" className="category-nav__all">
++              Semua produk
++            </Link>
+           </nav>
+         </div>
++
+         {open && (
+           <nav className="mobile-nav shell">
+-            {nav.map((item) => <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>{item.label}</Link>)}
+-            <Link href={user ? "/account" : "/login"} onClick={() => setOpen(false)}>{user ? "Akun saya" : "Masuk / Daftar"}</Link>
+-            <Link href="/cart" onClick={() => setOpen(false)}>Keranjang ({itemCount})</Link>
++            {nav.map((item) => (
++              <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>
++                {item.label}
++              </Link>
++            ))}
++            <Link href={user ? "/account" : "/login"} onClick={() => setOpen(false)}>
++              {user ? "Akun saya" : "Masuk / Daftar"}
++            </Link>
++            <Link href="/cart" onClick={() => setOpen(false)}>
++              Keranjang ({itemCount})
++            </Link>
+           </nav>
+         )}
+       </header>
