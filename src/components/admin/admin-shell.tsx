@@ -33,7 +33,13 @@ function isActive(pathname: string, href: string) {
   return href === "/admin" ? pathname === href : pathname.startsWith(href);
 }
 
-export function AdminShell({ children, admin }: { children: React.ReactNode; admin: { name: string; email: string } }) {
+export function AdminShell({
+  children,
+  admin,
+}: {
+  children: React.ReactNode;
+  admin: { name: string; email: string };
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
@@ -49,13 +55,27 @@ export function AdminShell({ children, admin }: { children: React.ReactNode; adm
       <aside className={open ? "admin-sidebar open" : "admin-sidebar"}>
         <div className="admin-sidebar__brand">
           <img src="/brand/logo-mark.svg" alt="" />
-          <div><strong>BERKAH OYOT</strong><span>ADMIN COMMERCE</span></div>
-          <button className="admin-sidebar__close" onClick={() => setOpen(false)} aria-label="Tutup menu"><X size={20} /></button>
+          <div>
+            <strong>BERKAH OYOT</strong>
+            <span>ADMIN Panel</span>
+          </div>
+          <button
+            className="admin-sidebar__close"
+            onClick={() => setOpen(false)}
+            aria-label="Tutup menu"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <nav className="admin-nav">
           {navigation.map(({ href, label, icon: Icon }) => (
-            <Link key={href} href={href} className={isActive(pathname, href) ? "active" : ""} onClick={() => setOpen(false)}>
+            <Link
+              key={href}
+              href={href}
+              className={isActive(pathname, href) ? "active" : ""}
+              onClick={() => setOpen(false)}
+            >
               <Icon size={18} />
               <span>{label}</span>
               <ChevronRight size={15} />
@@ -65,18 +85,40 @@ export function AdminShell({ children, admin }: { children: React.ReactNode; adm
 
         <div className="admin-sidebar__user">
           <CircleUserRound size={20} />
-          <div><strong>{admin.name}</strong><span>{admin.email}</span></div>
-          <button onClick={handleLogout} title="Keluar"><LogOut size={18} /></button>
+          <div>
+            <strong>{admin.name}</strong>
+            <span>{admin.email}</span>
+          </div>
+          <button onClick={handleLogout} title="Keluar">
+            <LogOut size={18} />
+          </button>
         </div>
       </aside>
 
-      {open && <button className="admin-overlay" onClick={() => setOpen(false)} aria-label="Tutup menu" />}
+      {open && (
+        <button
+          className="admin-overlay"
+          onClick={() => setOpen(false)}
+          aria-label="Tutup menu"
+        />
+      )}
 
       <div className="admin-main">
         <header className="admin-topbar">
-          <button className="admin-menu-button" onClick={() => setOpen(true)} aria-label="Buka menu"><Menu size={21} /></button>
-          <div><strong>Panel Administrasi</strong><span>Kelola storefront dan operasional toko</span></div>
-          <Link href="/" target="_blank" className="admin-store-link">Lihat toko</Link>
+          <button
+            className="admin-menu-button"
+            onClick={() => setOpen(true)}
+            aria-label="Buka menu"
+          >
+            <Menu size={21} />
+          </button>
+          <div>
+            <strong>Panel Administrasi</strong>
+            <span>Kelola storefront dan operasional toko</span>
+          </div>
+          <Link href="/" target="_blank" className="admin-store-link">
+            Lihat toko
+          </Link>
         </header>
         <main className="admin-content">{children}</main>
       </div>
